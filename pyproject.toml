@@ -1,13 +1,15 @@
 [project]
 name = "pytris"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Clone-tris in python"
 readme = "README.md"
 authors = [
     { name = "Abderrahmane Tahri Jouti", email = "tj.abderrahmane@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "arcade>=3.3.2",
+]
 
 [project.scripts]
 pytris = "pytris:main"
