@@ -1,3 +1,4 @@
+from typing import override
 import arcade
 
 
@@ -6,14 +7,9 @@ class Game(arcade.View):
         super().__init__()
         self.background_color = arcade.color.AERO_BLUE
 
-    def on_draw(self):
+    @override
+    def on_draw(self) -> bool | None:
         self.clear()
-
-    def on_update(self, dt):
-        pass
-
-    def on_key_press(self, key, key_modifiers):
-        pass
 
 
 def main() -> None:
