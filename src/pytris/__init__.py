@@ -1,7 +1,8 @@
-from typing import override
+from typing import override, final
 import arcade
 
 
+@final
 class Game(arcade.View):
     def __init__(self):
         super().__init__()
