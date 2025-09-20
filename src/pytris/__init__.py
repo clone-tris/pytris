@@ -1,23 +1,56 @@
-from typing import override, final
-import arcade
+import pygame
 
 
-@final
-class Game(arcade.View):
-    def __init__(self):
-        super().__init__()
-        self.background_color = arcade.color.AERO_BLUE
+class Game:
+    def __init__(self) -> None:
+        print("init")
 
-    @override
-    def on_draw(self) -> bool | None:
-        self.clear()
+    def draw(self):
+        print("draw")
+
+    def update(self):
+        print("update")
+
+    def loop(self):
+        print("loop")
 
 
 def main() -> None:
-    print("Hello from pytris!")
-    window = arcade.Window(width=400, height=300, title="Pytris")
+    pygame.init()
+    screen = pygame.display.set_mode(size=(1280, 720))
+    clock = pygame.time.Clock()
+    running = True
+    dt = 0
 
-    game = Game()
-    window.show_view(game)
+    player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-    arcade.run()
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        screen.fill("#660e7a")
+
+        pygame.draw.circle(screen, "#99ccff", player_pos, 40)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            player_pos.y -= 300 * dt
+        if keys[pygame.K_s]:
+            player_pos.y += 300 * dt
+        if keys[pygame.K_a]:
+            player_pos.x -= 300 * dt
+        if keys[pygame.K_d]:
+            player_pos.x += 300 * dt
+        if keys[pygame.K_q]:
+            running = False
+
+        # flip() the display to put your work on screen
+        pygame.display.flip()
+
+        # limits FPS to 60
+        # dt is delta time in seconds since last frame, used for framerate-
+        # independent physics.
+        dt = clock.tick(60) / 1000
+
+    pygame.quit()
