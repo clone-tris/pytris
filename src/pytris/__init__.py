@@ -1,4 +1,4 @@
-from typing import override
+from typing import cast, override
 import pygame
 
 SQUARE_WIDTH = 24
@@ -19,6 +19,12 @@ class Screen:
         pass
 
     def draw(self, surface: pygame.Surface):  # pyright: ignore[reportUnusedParameter]
+        pass
+
+    def key_down(self, key: int):  # pyright: ignore[reportUnusedParameter]
+        pass
+
+    def mouse_button_up(self):
         pass
 
 
@@ -47,6 +53,10 @@ class GameScreen(Screen):
         surface.fill("#660e7a")
         pygame.draw.circle(surface, "#99ccff", self.player_pos, 40)
 
+    @override
+    def key_down(self, key: int):
+        print(f"{key}", key)
+
 
 class Pytris:
     running: bool = True
@@ -71,11 +81,25 @@ class Pytris:
         if screen_event == "QUIT_PLEASE":
             self.running = False
 
+    def key_down(self, key: int):
+        self.screen.key_down(key)
+
+    def mouse_button_up(self):
+        self.screen.mouse_button_up()
+
     def loop(self):
         while self.running:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
+                match event.type:
+                    case pygame.QUIT:
+                        self.running = False
+                    case pygame.KEYDOWN:
+                        self.key_down(key=cast(int, event.key))
+                    case pygame.MOUSEBUTTONUP:
+                        self.mouse_button_up()
+                    case _:
+                        pass
+
             self.update()
             self.draw()
 
