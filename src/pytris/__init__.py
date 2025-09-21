@@ -1,6 +1,18 @@
 from typing import override
 import pygame
 
+SQUARE_WIDTH = 24
+SQUARE_BORDER_WIDTH = 3
+PUZZLE_HEIGHT = 20
+PUZZLE_WIDTH = 10
+
+SIDEBAR_WIDTH = SQUARE_WIDTH * 6
+
+WAR_ZONE_WIDTH = PUZZLE_WIDTH * SQUARE_WIDTH
+
+CANVAS_WIDTH = SIDEBAR_WIDTH + WAR_ZONE_WIDTH
+CANVAS_HEIGHT = PUZZLE_HEIGHT * SQUARE_WIDTH
+
 
 class Screen:
     def update(self, dt: float) -> str | None:  # pyright: ignore[reportUnusedParameter]
@@ -12,6 +24,9 @@ class Screen:
 
 class GameScreen(Screen):
     player_pos: pygame.Vector2 = pygame.Vector2(0, 0)
+
+    def __init__(self) -> None:
+        self.player_pos = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
 
     @override
     def update(self, dt: float) -> str | None:
@@ -30,11 +45,10 @@ class GameScreen(Screen):
     @override
     def draw(self, surface: pygame.Surface):
         surface.fill("#660e7a")
-        player_pos = pygame.Vector2(surface.get_width() / 2, surface.get_height() / 2)
-        pygame.draw.circle(surface, "#99ccff", player_pos, 40)
+        pygame.draw.circle(surface, "#99ccff", self.player_pos, 40)
 
 
-class Game:
+class Pytris:
     running: bool = True
     screen: Screen
     surface: pygame.Surface
@@ -43,7 +57,7 @@ class Game:
 
     def __init__(self) -> None:
         pygame.init()
-        self.surface = pygame.display.set_mode(size=(1280, 720))
+        self.surface = pygame.display.set_mode(size=(CANVAS_WIDTH, CANVAS_HEIGHT))
         self.clock = pygame.time.Clock()
         self.screen = GameScreen()
         self.dt = 0
@@ -73,5 +87,5 @@ class Game:
 
 
 def main() -> None:
-    game = Game()
+    game = Pytris()
     game.loop()
