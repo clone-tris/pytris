@@ -1,5 +1,6 @@
 from typing import cast, override
 import pygame
+from pygame import Surface
 
 SQUARE_WIDTH = 24
 SQUARE_BORDER_WIDTH = 3
@@ -15,47 +16,60 @@ CANVAS_HEIGHT = PUZZLE_HEIGHT * SQUARE_WIDTH
 
 
 class Screen:
-    def update(self, dt: float) -> str | None:  # pyright: ignore[reportUnusedParameter]
+    surface: Surface = Surface((0, 0))
+
+    def update(self) -> str | None:
         pass
 
-    def draw(self, surface: pygame.Surface):  # pyright: ignore[reportUnusedParameter]
+    def draw(self) -> None:
         pass
 
-    def key_down(self, key: int):  # pyright: ignore[reportUnusedParameter]
+    def key_down(self, key: int) -> None:  # pyright: ignore[reportUnusedParameter]
         pass
 
-    def mouse_button_up(self):
+    def mouse_button_up(self) -> None:
         pass
+
+    def get_surface(self) -> Surface:
+        print("this screen is not returning a surface")
+        return self.surface
 
 
 class GameScreen(Screen):
-    player_pos: pygame.Vector2 = pygame.Vector2(0, 0)
-
-    def __init__(self) -> None:
-        self.player_pos = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+    player_pos: pygame.Vector2 = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+    surface: Surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
+    shouldQuit: bool = False
 
     @override
-    def update(self, dt: float) -> str | None:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.player_pos.y -= 300 * dt
-        if keys[pygame.K_s]:
-            self.player_pos.y += 300 * dt
-        if keys[pygame.K_a]:
-            self.player_pos.x -= 300 * dt
-        if keys[pygame.K_d]:
-            self.player_pos.x += 300 * dt
-        if keys[pygame.K_q]:
+    def update(self) -> str | None:
+        if self.shouldQuit:
             return "QUIT_PLEASE"
+        pass
 
     @override
-    def draw(self, surface: pygame.Surface):
-        surface.fill("#660e7a")
-        pygame.draw.circle(surface, "#99ccff", self.player_pos, 40)
+    def draw(self):
+        self.surface.fill("#660e7a")
+        pygame.draw.circle(self.surface, "#99ccff", self.player_pos, 40)
 
     @override
     def key_down(self, key: int):
-        print(f"{key}", key)
+        match key:
+            case pygame.K_w:
+                self.player_pos.y -= 3
+            case pygame.K_s:
+                self.player_pos.y += 3
+            case pygame.K_a:
+                self.player_pos.x -= 3
+            case pygame.K_d:
+                self.player_pos.x += 3
+            case pygame.K_q:
+                self.shouldQuit = True
+            case _:
+                pass
+
+    @override
+    def get_surface(self) -> Surface:
+        return self.surface
 
 
 class Pytris:
@@ -74,10 +88,11 @@ class Pytris:
         self.running = True
 
     def draw(self):
-        self.screen.draw(self.surface)
+        self.screen.draw()
+        self.surface.blit(self.screen.get_surface())
 
     def update(self):
-        screen_event = self.screen.update(self.dt)
+        screen_event = self.screen.update()
         if screen_event == "QUIT_PLEASE":
             self.running = False
 
