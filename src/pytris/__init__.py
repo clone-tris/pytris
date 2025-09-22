@@ -16,8 +16,6 @@ CANVAS_HEIGHT = PUZZLE_HEIGHT * SQUARE_WIDTH
 
 
 class Screen:
-    surface: Surface = Surface((0, 0))
-
     def update(self) -> str | None:
         pass
 
@@ -32,13 +30,18 @@ class Screen:
 
     def get_surface(self) -> Surface:
         print("this screen is not returning a surface")
-        return self.surface
+        return Surface((0, 0))
 
 
 class GameScreen(Screen):
-    player_pos: pygame.Vector2 = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
-    surface: Surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
-    shouldQuit: bool = False
+    player_pos: pygame.Vector2
+    surface: Surface
+    shouldQuit: bool
+
+    def __init__(self) -> None:
+        self.player_pos = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
+        self.surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
+        self.shouldQuit = False
 
     @override
     def update(self) -> str | None:
@@ -73,18 +76,16 @@ class GameScreen(Screen):
 
 
 class Pytris:
-    running: bool = True
+    running: bool
     screen: Screen
     surface: pygame.Surface
     clock: pygame.Clock
-    dt: float
 
     def __init__(self) -> None:
         pygame.init()
         self.surface = pygame.display.set_mode(size=(CANVAS_WIDTH, CANVAS_HEIGHT))
         self.clock = pygame.time.Clock()
         self.screen = GameScreen()
-        self.dt = 0
         self.running = True
 
     def draw(self):
@@ -119,8 +120,6 @@ class Pytris:
             self.draw()
 
             pygame.display.flip()
-
-            self.dt = self.clock.tick(60) / 1000
 
         pygame.quit()
 
