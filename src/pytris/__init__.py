@@ -37,11 +37,18 @@ class GameScreen(Screen):
     player_pos: pygame.Vector2
     surface: Surface
     shouldQuit: bool
+    text: Surface
 
     def __init__(self) -> None:
         self.player_pos = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
         self.surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
         self.shouldQuit = False
+
+        font = pygame.font.Font(None, 64)
+
+        self.text = font.render(
+            text="Hi from Mars", antialias=True, color=pygame.Color("cyan")
+        )
 
     @override
     def update(self) -> str | None:
@@ -53,6 +60,7 @@ class GameScreen(Screen):
     def draw(self):
         self.surface.fill("#660e7a")
         pygame.draw.circle(self.surface, "#99ccff", self.player_pos, 40)
+        self.surface.blit(self.text, (100, 100))
 
     @override
     def key_down(self, key: int):
