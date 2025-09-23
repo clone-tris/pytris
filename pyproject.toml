@@ -11,12 +11,16 @@ dependencies = [
     "pygame-ce>=2.5.5",
 ]
 
+[tool.basedpyright]
+reportUnusedCallResult = "none"
+
 [project.scripts]
-pytris = "pytris:main"
+pytris = "main:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.basedpyright]
-reportUnusedCallResult = "none"
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+sources = ["src"]
