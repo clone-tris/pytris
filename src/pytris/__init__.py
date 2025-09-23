@@ -2,6 +2,8 @@ from typing import cast, override
 import pygame
 from pygame import Surface
 
+pygame.init()
+
 SQUARE_WIDTH = 24
 SQUARE_BORDER_WIDTH = 3
 PUZZLE_HEIGHT = 20
@@ -13,6 +15,8 @@ WAR_ZONE_WIDTH = PUZZLE_WIDTH * SQUARE_WIDTH
 
 CANVAS_WIDTH = SIDEBAR_WIDTH + WAR_ZONE_WIDTH
 CANVAS_HEIGHT = PUZZLE_HEIGHT * SQUARE_WIDTH
+
+font = pygame.font.SysFont(None, 24)
 
 
 class Screen:
@@ -43,8 +47,6 @@ class GameScreen(Screen):
         self.player_pos = pygame.Vector2(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
         self.surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
         self.shouldQuit = False
-
-        font = pygame.font.Font(None, 64)
 
         self.text = font.render(
             text="Hi from Mars", antialias=True, color=pygame.Color("cyan")
@@ -90,7 +92,6 @@ class Pytris:
     clock: pygame.Clock
 
     def __init__(self) -> None:
-        pygame.init()
         self.surface = pygame.display.set_mode(size=(CANVAS_WIDTH, CANVAS_HEIGHT))
         self.clock = pygame.time.Clock()
         self.screen = GameScreen()
