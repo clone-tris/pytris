@@ -28,21 +28,15 @@ class Pytris:
         if screen_event == ScreenEvent.CLOSE_APPLICATION:
             self.running = False
 
-    def key_down(self, key: int):
-        self.screen.key_down(key)
-
-    def mouse_button_up(self):
-        self.screen.mouse_button_up()
-
     def handle_events(self):
         for event in pygame.event.get():
             match event.type:
                 case pygame.QUIT:
                     self.running = False
                 case pygame.KEYDOWN:
-                    self.key_down(key=cast(int, event.key))
+                    self.screen.key_down(key=cast(int, event.key))
                 case pygame.MOUSEBUTTONUP:
-                    self.mouse_button_up()
+                    self.screen.mouse_button_up()
                 case _:
                     pass
 
