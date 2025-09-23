@@ -34,19 +34,21 @@ class Pytris:
     def mouse_button_up(self):
         self.screen.mouse_button_up()
 
+    def handle_events(self):
+        for event in pygame.event.get():
+            match event.type:
+                case pygame.QUIT:
+                    self.running = False
+                case pygame.KEYDOWN:
+                    self.key_down(key=cast(int, event.key))
+                case pygame.MOUSEBUTTONUP:
+                    self.mouse_button_up()
+                case _:
+                    pass
+
     def loop(self):
         while self.running:
-            for event in pygame.event.get():
-                match event.type:
-                    case pygame.QUIT:
-                        self.running = False
-                    case pygame.KEYDOWN:
-                        self.key_down(key=cast(int, event.key))
-                    case pygame.MOUSEBUTTONUP:
-                        self.mouse_button_up()
-                    case _:
-                        pass
-
+            self.handle_events()
             self.update()
             self.draw()
 
