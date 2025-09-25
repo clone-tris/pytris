@@ -25,3 +25,7 @@ class Painter:
         for i in range(int(rows)):
             line_y = i * config.SQUARE_WIDTH
             pygame.draw.line(self.surface, color, (0, line_y), (self.width, line_y))
+
+        for i in range(int(columns)):
+            line_x = i * config.SQUARE_WIDTH
+            pygame.draw.line(self.surface, color, (line_x, 0), (line_x, self.height))
