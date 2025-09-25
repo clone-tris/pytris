@@ -11,6 +11,6 @@ class GamePainter(Painter):
             y = (shape.row + square.row) * config.SQUARE_WIDTH
             pygame.draw.rect(
                 self.surface,
-                shape.color,
+                square.color,
                 [x, y, config.SQUARE_WIDTH, config.SQUARE_WIDTH],
             )

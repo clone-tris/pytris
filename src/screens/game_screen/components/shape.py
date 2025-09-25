@@ -1,5 +1,3 @@
-from pygame import Color
-
 import config
 from screens.game_screen.components.square import Square
 
@@ -9,21 +7,18 @@ class Shape:
     column: int
     width: int
     height: int
-    color: Color
     squares: list[Square]
 
     def __init__(
         self,
         row: int,
         column: int,
-        color: Color,
         squares: list[Square],
     ) -> None:
         self.row = row
         self.column = column
         self.width = 0
         self.height = 0
-        self.color = color
         self.squares = squares
 
         if squares:

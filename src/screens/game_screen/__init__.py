@@ -13,27 +13,26 @@ from screens.game_screen.game_painter import GamePainter
 
 class GameScreen(Screen):
     painter: GamePainter
-    shouldQuit: bool
+    should_quit: bool
     player: Shape
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.player = Shape(
-            2,
-            2,
-            colors.Tetromino.CYAN.value,
-            [
+            row=2,
+            column=2,
+            squares=[
                 Square(0, 0, colors.Tetromino.CYAN.value),
                 Square(1, 0, colors.Tetromino.CYAN.value),
                 Square(0, 1, colors.Tetromino.CYAN.value),
                 Square(1, 1, colors.Tetromino.CYAN.value),
             ],
         )
-        self.shouldQuit = False
+        self.should_quit = False
 
     @override
     def update(self) -> ScreenEvent | None:
-        if self.shouldQuit:
+        if self.should_quit:
             return ScreenEvent.CLOSE_APPLICATION
         pass
 
@@ -47,6 +46,6 @@ class GameScreen(Screen):
     def key_down(self, key: int):
         match key:
             case pygame.K_q:
-                self.shouldQuit = True
+                self.should_quit = True
             case _:
                 pass

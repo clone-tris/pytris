@@ -1,6 +1,3 @@
-import pygame
-
-
 SQUARE_WIDTH = 24
 SQUARE_BORDER_WIDTH = 3
 PUZZLE_HEIGHT = 20
@@ -13,7 +10,6 @@ WAR_ZONE_WIDTH = PUZZLE_WIDTH * SQUARE_WIDTH
 CANVAS_WIDTH = SIDEBAR_WIDTH + WAR_ZONE_WIDTH
 CANVAS_HEIGHT = PUZZLE_HEIGHT * SQUARE_WIDTH
 
-pygame.init()
-font24 = pygame.font.SysFont(None, 24)
-font34 = pygame.font.SysFont(None, 34)
-font18 = pygame.font.SysFont(None, 18)
+FONT_SIZE_SMALL = 18
+FONT_SIZE_MEDIUM = 24
+FONT_SIZE_LARGE = 34
