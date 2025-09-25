@@ -20,8 +20,8 @@ class Pytris:
         self.running = True
 
     def draw(self):
-        self.screen.draw()
-        self.surface.blit(self.screen.get_surface())
+        screen_surface = self.screen.draw()
+        self.surface.blit(screen_surface)
 
     def update(self):
         screen_event = self.screen.update()

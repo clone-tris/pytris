@@ -23,8 +23,9 @@ class GameScreen(Screen):
         pass
 
     @override
-    def draw(self):
+    def draw(self) -> Surface:
         self.painter.draw_guide()
+        return self.painter.surface
 
     @override
     def key_down(self, key: int):
@@ -33,7 +34,3 @@ class GameScreen(Screen):
                 self.shouldQuit = True
             case _:
                 pass
-
-    @override
-    def get_surface(self) -> Surface:
-        return self.painter.surface

@@ -7,7 +7,7 @@ class Screen:
     def update(self) -> ScreenEvent | None:
         pass
 
-    def draw(self) -> None:
+    def draw(self) -> Surface:  # pyright: ignore[reportReturnType]
         pass
 
     def key_down(self, key: int) -> None:  # pyright: ignore[reportUnusedParameter]
@@ -15,7 +15,3 @@ class Screen:
 
     def mouse_button_up(self) -> None:
         pass
-
-    def get_surface(self) -> Surface:
-        print("this screen is not returning a surface")
-        return Surface((0, 0))
