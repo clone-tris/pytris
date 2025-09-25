@@ -1,7 +1,7 @@
 from typing import override
 from pygame import Surface
 import pygame
-from config import CANVAS_HEIGHT, CANVAS_WIDTH, font
+from config import CANVAS_HEIGHT, CANVAS_WIDTH, font24
 from engine.screen import Screen
 from screen_event import ScreenEvent
 
@@ -17,7 +17,7 @@ class GameScreen(Screen):
         self.surface = pygame.Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
         self.shouldQuit = False
 
-        self.text = font.render(
+        self.text = font24.render(
             text="Hi from Mars", antialias=True, color=pygame.Color("cyan")
         )
 

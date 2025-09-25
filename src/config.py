@@ -14,4 +14,6 @@ CANVAS_WIDTH = SIDEBAR_WIDTH + WAR_ZONE_WIDTH
 CANVAS_HEIGHT = PUZZLE_HEIGHT * SQUARE_WIDTH
 
 pygame.init()
-font = pygame.font.SysFont(None, 24)
+font24 = pygame.font.SysFont(None, 24)
+font34 = pygame.font.SysFont(None, 34)
+font18 = pygame.font.SysFont(None, 18)
