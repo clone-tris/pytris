@@ -21,4 +21,8 @@ class GamePainter(Painter):
         self.draw_shape(shape=player, ref=(SIDEBAR_WIDTH, 0))
 
     def draw_sidebar(self):
-        pass
+        pygame.draw.rect(
+            surface=self.surface,
+            color=colors.Ui.SIDEBAR_BACKGROUND.value,
+            rect=Rect(0, 0, SIDEBAR_WIDTH, CANVAS_HEIGHT),
+        )
