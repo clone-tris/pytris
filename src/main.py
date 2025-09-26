@@ -1,4 +1,5 @@
 from typing import cast
+
 import pygame
 
 from config import CANVAS_HEIGHT, CANVAS_WIDTH

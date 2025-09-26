@@ -7,7 +7,6 @@ import colors
 import config
 from screens.game_screen.components.shape import Shape
 
-
 WIDTH = config.SQUARE_WIDTH
 BORDER = config.SQUARE_BORDER_WIDTH
 INNER = WIDTH - BORDER * 2

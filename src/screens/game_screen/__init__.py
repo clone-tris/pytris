@@ -1,5 +1,6 @@
-import pygame
 from typing import override
+
+import pygame
 from pygame import Surface
 
 import colors

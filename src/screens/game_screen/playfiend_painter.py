@@ -1,4 +1,5 @@
 from pygame import Rect
+
 from config import CANVAS_HEIGHT, SIDEBAR_WIDTH, WAR_ZONE_WIDTH
 from engine.painter import Painter
 from screens.game_screen.components.shape import Shape
