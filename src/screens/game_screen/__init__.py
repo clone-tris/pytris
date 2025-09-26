@@ -8,7 +8,7 @@ from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen.components.shape import Shape
 from screens.game_screen.components.square import Square
-from screens.game_screen.game_painter import GamePainter
+from screens.game_screen.playfiend_painter import GamePainter
 
 
 class GameScreen(Screen):
