@@ -4,20 +4,20 @@ from pygame import Color
 
 
 class Tetromino(Enum):
-    CYAN = Color("#6DECEEFF")
-    BLUE = Color("#0014E6FF")
-    ORANGE = Color("#E4A338FF")
-    YELLOW = Color("#F0EF4FFF")
-    GREEN = Color("#6EEB47FF")
-    PURPLE = Color("#9225E7FF")
-    RED = Color("#DC2F20FF")
+    CYAN = Color("#00F0F0FF")
+    BLUE = Color("#0000F0FF")
+    ORANGE = Color("#F0A000FF")
+    YELLOW = Color("#F0F000FF")
+    GREEN = Color("#00F000FF")
+    PURPLE = Color("#A000F0FF")
+    RED = Color("#F00000FF")
 
 
 class Square(Enum):
     DEFAULT_SQUARE_COLOR = Color("#cc8081FF")
-    BORDER_TOP = Color("#FFFFFFB3")
-    BORDER_BOTTOM = Color("#00000080")
-    BORDER_SIDE = Color("#0000001A")
+    BORDER_TOP = Color("#FFFFFF99")  # White at 61% Opacity
+    BORDER_BOTTOM = Color("#00000080")  # Black at 50% Opacity
+    BORDER_SIDE = Color("#0000001A")  # Black at 10% Opacity
 
 
 class Ui(Enum):
