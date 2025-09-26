@@ -13,6 +13,3 @@ class Square:
 
     def relative_copy(self, row: int, column: int):
         return Square(row=self.row + row, column=self.column + column, color=self.color)
-
-    def copy(self):
-        return Square(row=self.row, column=self.column, color=self.color)

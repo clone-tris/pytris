@@ -1,14 +1,15 @@
+import copy
 from typing import override
 
 import pygame
 from pygame import Surface
 
-import colors
-from config import CANVAS_HEIGHT, CANVAS_WIDTH
+from config import CANVAS_HEIGHT, CANVAS_WIDTH, PUZZLE_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
+from screens.game_screen.components import tetromino
 from screens.game_screen.components.shape import Shape
-from screens.game_screen.components.square import Square
+from screens.game_screen.components.tetromino import get_tetromino, random_tetromino
 from screens.game_screen.playfield_painter import GamePainter
 
 
@@ -16,31 +17,19 @@ class GameScreen(Screen):
     painter: GamePainter
     should_quit: bool
     player: Shape
+    next_player: Shape
     opponent: Shape
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
-        self.player = Shape(
-            row=2,
-            column=2,
-            squares=[
-                Square(0, 0, colors.Tetromino.CYAN.value),
-                Square(1, 0, colors.Tetromino.ORANGE.value),
-                Square(0, 1, colors.Tetromino.YELLOW.value),
-                Square(1, 1, colors.Tetromino.PURPLE.value),
-            ],
-        )
-        self.opponent = Shape(
-            row=0,
-            column=0,
-            squares=[
-                Square(19, 0, colors.Tetromino.RED.value),
-                Square(19, 1, colors.Tetromino.RED.value),
-                Square(19, 2, colors.Tetromino.RED.value),
-                Square(19, 3, colors.Tetromino.RED.value),
-            ],
-        )
+        self.next_player = random_tetromino()
+        # self.player = random_tetromino()
+        self.opponent = get_tetromino(tetromino.Name.I)
+        self.opponent.row = 19
+        self.opponent.column = 4
         self.should_quit = False
+        self.spawn_player()
+        self.player.row += 4
 
     @override
     def update(self) -> ScreenEvent | None:
@@ -61,3 +50,10 @@ class GameScreen(Screen):
                 self.should_quit = True
             case _:
                 pass
+
+    def spawn_player(self):
+        player = copy.deepcopy(self.next_player)
+        player.row = player.row - player.height
+        player.column = int((PUZZLE_WIDTH - player.width) / 2)
+        self.player = player
+        self.next_player = random_tetromino()
