@@ -23,9 +23,9 @@ class GameScreen(Screen):
             column=2,
             squares=[
                 Square(0, 0, colors.Tetromino.CYAN.value),
-                Square(1, 0, colors.Tetromino.CYAN.value),
-                Square(0, 1, colors.Tetromino.CYAN.value),
-                Square(1, 1, colors.Tetromino.CYAN.value),
+                Square(1, 0, colors.Tetromino.ORANGE.value),
+                Square(0, 1, colors.Tetromino.YELLOW.value),
+                Square(1, 1, colors.Tetromino.PURPLE.value),
             ],
         )
         self.should_quit = False
