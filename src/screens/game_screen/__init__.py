@@ -8,6 +8,7 @@ from config import CANVAS_HEIGHT, CANVAS_WIDTH, PUZZLE_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen.components import tetromino
+from screens.game_screen.components.score import POINTS, Score
 from screens.game_screen.components.shape import Shape
 from screens.game_screen.components.tetromino import get_tetromino, random_tetromino
 from screens.game_screen.playfield_painter import GamePainter
@@ -19,9 +20,11 @@ class GameScreen(Screen):
     player: Shape
     next_player: Shape
     opponent: Shape
+    score: Score
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
+        self.score = Score()
         self.next_player = random_tetromino()
         # self.player = random_tetromino()
         self.opponent = get_tetromino(tetromino.Name.I)
@@ -57,3 +60,14 @@ class GameScreen(Screen):
         player.column = int((PUZZLE_WIDTH - player.width) / 2)
         self.player = player
         self.next_player = random_tetromino()
+
+    def apply_score(self, lines_removed: int):
+        base_points = POINTS[lines_removed]
+        lines_cleared = self.score.lines_cleared + lines_removed
+        level = int(lines_cleared / 10 + 1)
+        points = base_points * (level + 1)
+        total = self.score.total + points
+
+        self.score.level = level
+        self.score.lines_cleared = lines_cleared
+        self.score.total = total

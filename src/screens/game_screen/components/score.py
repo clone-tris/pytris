@@ -12,7 +12,7 @@ class Score:
         self.lines_cleared = 0
 
 
-Points = MappingProxyType(
+POINTS = MappingProxyType(
     {
         1: 40,
         2: 100,
