@@ -1,6 +1,7 @@
 import pygame
 import pygame.gfxdraw
-from pygame import Surface
+from pygame import Rect, Surface
+from pygame.typing import Point
 
 import colors
 import config
@@ -22,25 +23,26 @@ class Painter:
         self.width = width
         self.height = height
 
-    def draw_guide(self):
-        self.surface.fill(colors.Ui.BACKGROUND.value)
+    def draw_guide(self, rect: Rect):
+        x, y, width, height = rect
 
-        rows = self.height / config.SQUARE_WIDTH
-        columns = self.width / config.SQUARE_WIDTH
+        rows = height / config.SQUARE_WIDTH
+        columns = width / config.SQUARE_WIDTH
         color = colors.Ui.GUIDE.value
 
         for i in range(int(rows)):
-            line_y = i * config.SQUARE_WIDTH
-            pygame.draw.line(self.surface, color, (0, line_y), (self.width, line_y))
+            line_y = y + i * config.SQUARE_WIDTH
+            pygame.draw.line(self.surface, color, (x, line_y), (x + width, line_y))
 
         for i in range(int(columns)):
-            line_x = i * config.SQUARE_WIDTH
-            pygame.draw.line(self.surface, color, (line_x, 0), (line_x, self.height))
+            line_x = x + i * config.SQUARE_WIDTH
+            pygame.draw.line(self.surface, color, (line_x, y), (line_x, y + height))
 
-    def draw_shape(self, shape: Shape):
+    def draw_shape(self, shape: Shape, ref: Point):
+        refX, refY = ref
         for square in shape.squares:
-            x = (shape.column + square.column) * WIDTH
-            y = (shape.row + square.row) * WIDTH
+            x = refX + (shape.column + square.column) * WIDTH
+            y = refY + (shape.row + square.row) * WIDTH
 
             # background
             pygame.draw.rect(

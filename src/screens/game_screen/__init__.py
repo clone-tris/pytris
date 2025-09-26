@@ -15,6 +15,7 @@ class GameScreen(Screen):
     painter: GamePainter
     should_quit: bool
     player: Shape
+    opponent: Shape
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -28,6 +29,16 @@ class GameScreen(Screen):
                 Square(1, 1, colors.Tetromino.PURPLE.value),
             ],
         )
+        self.opponent = Shape(
+            row=0,
+            column=0,
+            squares=[
+                Square(19, 0, colors.Tetromino.RED.value),
+                Square(19, 1, colors.Tetromino.RED.value),
+                Square(19, 2, colors.Tetromino.RED.value),
+                Square(19, 3, colors.Tetromino.RED.value),
+            ],
+        )
         self.should_quit = False
 
     @override
@@ -38,8 +49,8 @@ class GameScreen(Screen):
 
     @override
     def draw(self) -> Surface:
-        self.painter.draw_guide()
-        self.painter.draw_shape(self.player)
+        self.painter.draw_playfield(player=self.player, opponent=self.opponent)
+        self.painter.draw_sidebar()
         return self.painter.surface
 
     @override
