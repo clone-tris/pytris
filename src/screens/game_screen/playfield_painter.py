@@ -22,7 +22,7 @@ class GamePainter(Painter):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
         self.score_font = pygame.font.Font(
-            pygame.font.match_font("Jetbrains Mono Regular"), FONT_SIZE_SMALL
+            pygame.font.match_font("jetbrainsmono"), FONT_SIZE_SMALL
         )
 
     def draw_playfield(self, player: Shape, opponent: Shape):
