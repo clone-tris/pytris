@@ -54,5 +54,6 @@ class Pytris:
 
 
 def main() -> None:
+    pygame.init()
     game = Pytris()
     game.loop()
