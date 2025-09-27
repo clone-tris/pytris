@@ -26,7 +26,6 @@ class GameScreen(Screen):
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.score = Score()
         self.next_player = random_tetromino()
-        # self.player = random_tetromino()
         self.opponent = get_tetromino(tetromino.Name.I)
         self.opponent.row = 19
         self.opponent.column = 4
@@ -43,7 +42,7 @@ class GameScreen(Screen):
     @override
     def draw(self) -> Surface:
         self.painter.draw_playfield(player=self.player, opponent=self.opponent)
-        self.painter.draw_sidebar()
+        self.painter.draw_sidebar(next_player=self.next_player, score=self.score)
         return self.painter.surface
 
     @override

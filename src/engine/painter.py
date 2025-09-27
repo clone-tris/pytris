@@ -23,6 +23,12 @@ class Painter:
         self.height = height
 
     def draw_guide(self, rect: Rect):
+        pygame.draw.rect(
+            surface=self.surface,
+            color=colors.Ui.BACKGROUND.value,
+            rect=rect,
+        )
+
         x, y, width, height = rect
 
         rows = height / config.SQUARE_WIDTH
