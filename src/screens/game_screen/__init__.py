@@ -21,17 +21,19 @@ class GameScreen(Screen):
     next_player: Shape
     opponent: Shape
     score: Score
+    paused: bool
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.score = Score()
         self.next_player = random_tetromino()
         self.opponent = get_tetromino(tetromino.Name.I)
-        self.opponent.row = 19
+        self.opponent.row = 4
         self.opponent.column = 4
         self.should_quit = False
         self.spawn_player()
         self.player.row += 4
+        self.paused = False
 
     @override
     def update(self) -> ScreenEvent | None:
@@ -50,11 +52,16 @@ class GameScreen(Screen):
         match key:
             case pygame.K_q:
                 self.should_quit = True
+            case pygame.K_r:
+                self.rotate_player()
+            case pygame.K_s:
+                self.spawn_player()
+                self.player.row = 2
             case _:
                 pass
 
     def spawn_player(self):
-        player = copy.deepcopy(self.next_player)
+        player = self.next_player.copy()
         player.row = player.row - player.height
         player.column = int((PUZZLE_WIDTH - player.width) / 2)
         self.player = player
@@ -70,3 +77,13 @@ class GameScreen(Screen):
         self.score.level = level
         self.score.lines_cleared = lines_cleared
         self.score.total = total
+
+    def rotate_player(self):
+        if self.paused:
+            return
+
+        foreshadow = copy.deepcopy(self.player)
+        foreshadow.rotate()
+
+        if not foreshadow.collides_with(self.opponent) and foreshadow.within_bounds():
+            self.player = foreshadow
