@@ -89,6 +89,21 @@ class Shape:
             for square in self.absolute_squares()
         )
 
+    def eat(self, other: Shape):
+        self.squares += other.squares
+
+    def find_full_lines(self):
+        population: dict[int, int] = {}
+        full_rows: list[int] = []
+        for square in self.squares:
+            population[square.row] = population.get(square.row, 0) + 1
+
+        full_rows = [
+            row for row, count in population.items() if count >= config.PUZZLE_WIDTH
+        ]
+
+        return full_rows
+
     @override
     def __repr__(self) -> str:
         return f"Shape(row={self.row},column={self.column},width={self.width},height={self.height},squares{self.squares})"
