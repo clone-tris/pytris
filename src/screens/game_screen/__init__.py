@@ -2,7 +2,7 @@ import time
 from typing import override
 
 import pygame
-from pygame import TIMER_RESOLUTION, Surface
+from pygame import Surface
 
 from config import CANVAS_HEIGHT, CANVAS_WIDTH, PUZZLE_WIDTH
 from engine.screen import Screen
