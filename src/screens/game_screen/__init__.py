@@ -78,20 +78,27 @@ class GameScreen(Screen):
                     return ScreenEvent.GO_TO_GAME
                 case Command.LOSE_THE_GAME:
                     return ScreenEvent.GO_TO_OVER
-                case Command.ROTATE:
-                    self.rotate_player()
-                case Command.MOVE_LEFT:
-                    self.move_player_left()
-                case Command.MOVE_RIGHT:
-                    self.move_player_right()
-                case Command.MOVE_DOWN:
-                    self.move_player_down()
+                case Command.PAUSE:
+                    self.toggle_paused()
                 case _:
                     pass
 
-        self.command_queue = []
+        if not self.paused:
+            for command in self.command_queue:
+                match command:
+                    case Command.ROTATE:
+                        self.rotate_player()
+                    case Command.MOVE_LEFT:
+                        self.move_player_left()
+                    case Command.MOVE_RIGHT:
+                        self.move_player_right()
+                    case Command.MOVE_DOWN:
+                        self.move_player_down()
+                    case _:
+                        pass
+            self.apply_gravity()
 
-        self.apply_gravity()
+        self.command_queue = []
 
     @override
     def draw(self) -> Surface:
@@ -107,7 +114,7 @@ class GameScreen(Screen):
             case pygame.K_r:
                 self.restart()
             case pygame.K_p:
-                self.toggle_paused()
+                self.command_queue.append(Command.PAUSE)
             case pygame.K_UP | pygame.K_w | pygame.K_SPACE:
                 self.command_queue.append(Command.ROTATE)
             case pygame.K_a | pygame.K_LEFT:
@@ -130,7 +137,7 @@ class GameScreen(Screen):
             self.make_player_fall()
 
     def make_player_fall(self):
-        if self.paused or self.is_player_falling:
+        if self.is_player_falling:
             return
 
         self.is_player_falling = True
@@ -150,7 +157,7 @@ class GameScreen(Screen):
 
     def mop_the_floor(self):
         now = time_milis()
-        if now < self.end_of_lock or self.paused or self.is_mopping_floor:
+        if now < self.end_of_lock or self.is_mopping_floor:
             return
 
         self.is_mopping_floor = True
@@ -213,9 +220,6 @@ class GameScreen(Screen):
         self.command_queue.append(Command.LOSE_THE_GAME)
 
     def rotate_player(self):
-        if self.paused:
-            return
-
         foreshadow = self.player.copy()
         foreshadow.rotate()
 
@@ -232,9 +236,6 @@ class GameScreen(Screen):
         return self.move_player(1, 0)
 
     def move_player(self, row: int, column: int):
-        if self.paused:
-            return False
-
         foreshadow = self.player.copy()
         foreshadow.translate(row=row, column=column)
 
