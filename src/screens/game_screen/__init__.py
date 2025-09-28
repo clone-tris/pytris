@@ -22,6 +22,7 @@ class GameScreen(Screen):
     opponent: Shape
     score: Score
     paused: bool
+    on_floor: bool
     next_fall: int
     fall_rate: int
     floor_rate: int
@@ -38,6 +39,7 @@ class GameScreen(Screen):
         self.spawn_player()
         self.player.row += 4
         self.paused = False
+        self.on_floor = False
         self.next_fall = time_milis()
         self.fall_rate = 1000
         self.floor_rate = 500
@@ -84,6 +86,22 @@ class GameScreen(Screen):
                 self.spawn_player()
             case _:
                 pass
+
+    def apply_gravity(self):
+        now = time_milis()
+        if now < self.next_fall:
+            return
+
+        if self.on_floor:
+            self.mop_the_floor()
+        else:
+            self.make_player_fall()
+
+    def make_player_fall(self):
+        pass
+
+    def mop_the_floor(self):
+        pass
 
     def spawn_player(self):
         player = self.next_player.copy()
