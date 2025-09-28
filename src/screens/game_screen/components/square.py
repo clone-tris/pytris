@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import override
 
 from pygame import Color
@@ -14,7 +15,10 @@ class Square:
         self.color = color
 
     def relative_copy(self, row: int, column: int):
-        return Square(row=self.row + row, column=self.column + column, color=self.color)
+        copy = deepcopy(self)
+        copy.row += row
+        copy.column += column
+        return copy
 
     @override
     def __repr__(self) -> str:

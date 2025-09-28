@@ -31,9 +31,7 @@ class GameScreen(Screen):
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.score = Score()
         self.next_player = random_tetromino()
-        self.opponent = get_tetromino(tetromino.Name.I)
-        self.opponent.row = 7
-        self.opponent.column = 4
+        self.opponent = Shape(row=0, column=0, squares=[])
         self.should_quit = False
         self.spawn_player()
         self.player.row += 4
@@ -76,6 +74,10 @@ class GameScreen(Screen):
                 self.move_player_right()
             case pygame.K_s | pygame.K_DOWN:
                 self.move_player_down()
+            case pygame.K_e:
+                self.opponent.eat(self.player)
+                self.opponent.remove_rows(self.opponent.find_full_rows())
+                self.spawn_player()
             case _:
                 pass
 

@@ -49,11 +49,7 @@ class Shape:
 
     def absolute_squares(self):
         return [
-            Square(
-                row=self.row + square.row,
-                column=self.column + square.column,
-                color=square.color,
-            )
+            square.relative_copy(row=self.row, column=self.column)
             for square in self.squares
         ]
 
@@ -90,7 +86,22 @@ class Shape:
         )
 
     def eat(self, other: Shape):
-        self.squares += other.squares
+        self.squares += other.absolute_squares()
+
+    def remove_rows(self, full_rows: list[int]):
+        filtered_squares_grid = deepcopy(
+            [square for square in self.squares if square.row not in full_rows]
+        )
+
+        squares: list[Square] = []
+        for square in filtered_squares_grid:
+            row_before_shifting = square.row
+            for full_row in full_rows:
+                if full_row > row_before_shifting:
+                    square.row += 1
+            squares.append(square)
+
+        self.squares = squares
 
     def find_full_rows(self):
         population: dict[int, int] = {}
