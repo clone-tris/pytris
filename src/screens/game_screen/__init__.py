@@ -23,6 +23,8 @@ class GameScreen(Screen):
     score: Score
     paused: bool
     next_fall: int
+    fall_rate: int
+    floor_rate: int
     time_remaining_after_paused: int
     should_restart: bool
     show_game_over: bool
@@ -37,6 +39,8 @@ class GameScreen(Screen):
         self.player.row += 4
         self.paused = False
         self.next_fall = time_milis()
+        self.fall_rate = 1000
+        self.floor_rate = 500
         self.time_remaining_after_paused = 0
         self.should_restart = False
         self.show_game_over = False
@@ -88,12 +92,16 @@ class GameScreen(Screen):
         self.player = player
         self.next_player = random_tetromino()
 
-    def apply_score(self, lines_removed: int):
+    def update_score(self, lines_removed: int):
+        current_level = self.score.level
         base_points = POINTS[lines_removed]
         lines_cleared = self.score.lines_cleared + lines_removed
         level = int(lines_cleared / 10 + 1)
         points = base_points * (level + 1)
         total = self.score.total + points
+
+        if level != current_level:
+            self.fall_rate -= int(self.fall_rate / 3)
 
         self.score.level = level
         self.score.lines_cleared = lines_cleared
@@ -105,8 +113,6 @@ class GameScreen(Screen):
             return
 
         self.opponent.remove_rows(full_rows=full_rows)
-
-        # TODO applying score code in ruby shouldn't be here
 
     def toggle_paused(self):
         self.paused = not self.paused
