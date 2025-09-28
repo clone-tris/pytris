@@ -4,7 +4,15 @@ from typing import override
 import pygame
 from pygame import Surface
 
-from config import CANVAS_HEIGHT, CANVAS_WIDTH, PUZZLE_WIDTH
+from config import (
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
+    FALL_RATE_REDUCTION_FACTOR,
+    FLOOR_LOCK_RATE,
+    INITIAL_FALL_RATE,
+    LINES_PER_LEVEL,
+    PUZZLE_WIDTH,
+)
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen.components.score import POINTS, Score
@@ -42,8 +50,8 @@ class GameScreen(Screen):
         self.is_player_falling = False
         self.on_floor = False
         self.next_fall = time_milis()
-        self.fall_rate = 1000
-        self.floor_rate = 500
+        self.fall_rate = INITIAL_FALL_RATE
+        self.floor_rate = FLOOR_LOCK_RATE
         self.end_of_lock = 0
         self.is_mopping_floor = False
         self.time_remaining_after_paused = 0
@@ -151,12 +159,12 @@ class GameScreen(Screen):
         current_level = self.score.level
         base_points = POINTS[lines_removed]
         lines_cleared = self.score.lines_cleared + lines_removed
-        level = int(lines_cleared / 10 + 1)
+        level = int(lines_cleared / LINES_PER_LEVEL + 1)
         points = base_points * (level + 1)
         total = self.score.total + points
 
         if level != current_level:
-            self.fall_rate -= int(self.fall_rate / 3)
+            self.fall_rate -= int(self.fall_rate / FALL_RATE_REDUCTION_FACTOR)
 
         self.score.level = level
         self.score.lines_cleared = lines_cleared
