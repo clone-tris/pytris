@@ -7,10 +7,9 @@ from pygame import Surface
 from config import CANVAS_HEIGHT, CANVAS_WIDTH, PUZZLE_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
-from screens.game_screen.components import tetromino
 from screens.game_screen.components.score import POINTS, Score
 from screens.game_screen.components.shape import Shape
-from screens.game_screen.components.tetromino import get_tetromino, random_tetromino
+from screens.game_screen.components.tetromino import random_tetromino
 from screens.game_screen.playfield_painter import GamePainter
 
 
@@ -22,10 +21,13 @@ class GameScreen(Screen):
     opponent: Shape
     score: Score
     paused: bool
+    is_player_falling: bool
     on_floor: bool
     next_fall: int
     fall_rate: int
     floor_rate: int
+    end_of_lock: int
+    is_mopping_floor: bool
     time_remaining_after_paused: int
     should_restart: bool
     show_game_over: bool
@@ -36,16 +38,19 @@ class GameScreen(Screen):
         self.next_player = random_tetromino()
         self.opponent = Shape(row=0, column=0, squares=[])
         self.should_quit = False
-        self.spawn_player()
-        self.player.row += 4
         self.paused = False
+        self.is_player_falling = False
         self.on_floor = False
         self.next_fall = time_milis()
         self.fall_rate = 1000
         self.floor_rate = 500
+        self.end_of_lock = 0
+        self.is_mopping_floor = False
         self.time_remaining_after_paused = 0
         self.should_restart = False
         self.show_game_over = False
+
+        self.spawn_player()
 
     @override
     def update(self) -> ScreenEvent | None:
@@ -55,7 +60,7 @@ class GameScreen(Screen):
             return ScreenEvent.GO_TO_GAME
         if self.show_game_over:
             return ScreenEvent.GO_TO_OVER
-        pass
+        self.apply_gravity()
 
     @override
     def draw(self) -> Surface:
@@ -80,10 +85,6 @@ class GameScreen(Screen):
                 self.move_player_right()
             case pygame.K_s | pygame.K_DOWN:
                 self.move_player_down()
-            case pygame.K_e:
-                self.opponent.eat(self.player)
-                self.remove_full_lines()
-                self.spawn_player()
             case _:
                 pass
 
@@ -98,10 +99,48 @@ class GameScreen(Screen):
             self.make_player_fall()
 
     def make_player_fall(self):
-        pass
+        if self.paused or self.is_player_falling:
+            return
+
+        self.is_player_falling = True
+
+        able_to_move = self.move_player_down()
+
+        now = time_milis()
+        if able_to_move:
+            self.on_floor = False
+            self.next_fall = now + self.fall_rate
+        else:
+            self.on_floor = True
+            self.end_of_lock = now + self.floor_rate
+            self.next_fall = self.end_of_lock
+
+        self.is_player_falling = False
 
     def mop_the_floor(self):
-        pass
+        now = time_milis()
+        if now < self.end_of_lock or self.paused or self.is_mopping_floor:
+            return
+
+        self.is_mopping_floor = True
+
+        able_to_move = self.move_player_down()
+
+        if able_to_move:
+            return
+
+        self.opponent.eat(self.player)
+        full_rows = self.opponent.find_full_rows()
+        if full_rows:
+            self.opponent.remove_rows(full_rows=full_rows)
+            self.update_score(len(full_rows))
+
+        self.spawn_player()
+        if self.player.collides_with(self.opponent):
+            self.show_game_over = True
+
+        self.on_floor = False
+        self.is_mopping_floor = False
 
     def spawn_player(self):
         player = self.next_player.copy()
@@ -124,13 +163,6 @@ class GameScreen(Screen):
         self.score.level = level
         self.score.lines_cleared = lines_cleared
         self.score.total = total
-
-    def remove_full_lines(self):
-        full_rows = self.opponent.find_full_rows()
-        if not full_rows:
-            return
-
-        self.opponent.remove_rows(full_rows=full_rows)
 
     def toggle_paused(self):
         self.paused = not self.paused
@@ -160,17 +192,17 @@ class GameScreen(Screen):
             self.player = foreshadow
 
     def move_player_left(self):
-        self.move_player(0, -1)
+        return self.move_player(0, -1)
 
     def move_player_right(self):
-        self.move_player(0, 1)
+        return self.move_player(0, 1)
 
     def move_player_down(self):
-        self.move_player(1, 0)
+        return self.move_player(1, 0)
 
     def move_player(self, row: int, column: int):
         if self.paused:
-            return
+            return False
 
         foreshadow = self.player.copy()
         foreshadow.translate(row=row, column=column)
