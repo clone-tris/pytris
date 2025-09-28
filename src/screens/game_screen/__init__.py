@@ -40,7 +40,6 @@ class GameScreen(Screen):
     next_player: Shape
     opponent: Shape
     score: Score
-    paused: bool
     fall_rate: int
     next_fall: int
     end_of_lock: int
@@ -56,7 +55,6 @@ class GameScreen(Screen):
         self.score = Score()
         self.next_player = random_tetromino()
         self.opponent = Shape(row=0, column=0, squares=[])
-        self.paused = False
         self.is_player_falling = False
         self.next_fall = time_milis()
         self.fall_rate = INITIAL_FALL_RATE
@@ -71,20 +69,21 @@ class GameScreen(Screen):
 
     @override
     def update(self) -> ScreenEvent | None:
+        if self.state == GameState.GAME_OVER:
+            return ScreenEvent.GO_TO_OVER
+
         for command in self.command_queue:
             match command:
                 case Command.CLOSE_APPLICATION:
                     return ScreenEvent.CLOSE_APPLICATION
                 case Command.RESTART:
                     return ScreenEvent.GO_TO_GAME
-                case Command.LOSE_THE_GAME:
-                    return ScreenEvent.GO_TO_OVER
                 case Command.PAUSE:
                     self.toggle_paused()
                 case _:
                     pass
 
-        if not self.paused:
+        if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
             for command in self.command_queue:
                 match command:
                     case Command.ROTATE:
@@ -134,7 +133,7 @@ class GameScreen(Screen):
                 self.mop_the_floor()
             case GameState.PLAYING:
                 self.make_player_fall()
-            case GameState.PAUSED:
+            case _:
                 pass
 
     def make_player_fall(self):
@@ -146,7 +145,6 @@ class GameScreen(Screen):
 
         able_to_move = self.move_player_down()
 
-        now = time_milis()
         if able_to_move:
             self.state = GameState.PLAYING
             self.next_fall = now + self.fall_rate
@@ -176,6 +174,7 @@ class GameScreen(Screen):
             self.spawn_player()
             if self.player.collides_with(self.opponent):
                 self.lose_the_game()
+                return
 
         self.state = GameState.PLAYING
         self.is_mopping_floor = False
@@ -204,22 +203,22 @@ class GameScreen(Screen):
 
     def toggle_paused(self):
         now = time_milis()
-        if self.paused:
+        if self.state == GameState.PAUSED:
             self.next_fall = now + self.time_remaining_after_paused
+            self.state = GameState.PLAYING
 
-        else:
+        elif self.state == GameState.PLAYING:
             now = time_milis()
             self.time_remaining_after_paused = (
                 self.next_fall - now if now < self.next_fall else 0
             )
-
-        self.paused = not self.paused
+            self.state = GameState.PAUSED
 
     def restart(self):
         self.command_queue.append(Command.RESTART)
 
     def lose_the_game(self):
-        self.command_queue.append(Command.LOSE_THE_GAME)
+        self.state = GameState.GAME_OVER
 
     def rotate_player(self):
         foreshadow = self.player.copy()
