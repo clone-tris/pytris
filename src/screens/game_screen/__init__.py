@@ -19,6 +19,7 @@ from screen_event import ScreenEvent
 from screens.game_screen.components.score import POINTS, Score
 from screens.game_screen.components.shape import Shape
 from screens.game_screen.components.tetromino import random_tetromino
+from screens.game_screen.game_state import GameState
 from screens.game_screen.playfield_painter import GamePainter
 
 
@@ -33,12 +34,6 @@ class Command(Enum):
     LOSE_THE_GAME = 8
 
 
-class GameState(Enum):
-    PAUSED = 1
-    PLAYING = 2
-    ON_FLOOR = 3
-
-
 class GameScreen(Screen):
     painter: GamePainter
     player: Shape
@@ -46,12 +41,10 @@ class GameScreen(Screen):
     opponent: Shape
     score: Score
     paused: bool
-    is_player_falling: bool
-    on_floor: bool
-    next_fall: int
     fall_rate: int
-    floor_rate: int
+    next_fall: int
     end_of_lock: int
+    is_player_falling: bool
     is_mopping_floor: bool
     time_remaining_after_paused: int
     command_queue: list[Command]
@@ -65,14 +58,14 @@ class GameScreen(Screen):
         self.opponent = Shape(row=0, column=0, squares=[])
         self.paused = False
         self.is_player_falling = False
-        self.on_floor = False
         self.next_fall = time_milis()
         self.fall_rate = INITIAL_FALL_RATE
-        self.floor_rate = FLOOR_LOCK_RATE
         self.end_of_lock = 0
         self.is_mopping_floor = False
         self.time_remaining_after_paused = 0
         self.command_queue = []
+        self.state = GameState.PLAYING
+        self.previous_state = GameState.PLAYING
 
         self.spawn_player()
 
@@ -104,6 +97,7 @@ class GameScreen(Screen):
                         self.move_player_down()
                     case _:
                         pass
+
             self.apply_gravity()
 
         self.command_queue = []
@@ -135,17 +129,17 @@ class GameScreen(Screen):
                 pass
 
     def apply_gravity(self):
-        now = time_milis()
-        if now < self.next_fall:
-            return
-
-        if self.on_floor:
-            self.mop_the_floor()
-        else:
-            self.make_player_fall()
+        match self.state:
+            case GameState.ON_FLOOR:
+                self.mop_the_floor()
+            case GameState.PLAYING:
+                self.make_player_fall()
+            case GameState.PAUSED:
+                pass
 
     def make_player_fall(self):
-        if self.is_player_falling:
+        now = time_milis()
+        if now < self.next_fall or self.is_player_falling:
             return
 
         self.is_player_falling = True
@@ -154,11 +148,11 @@ class GameScreen(Screen):
 
         now = time_milis()
         if able_to_move:
-            self.on_floor = False
+            self.state = GameState.PLAYING
             self.next_fall = now + self.fall_rate
         else:
-            self.on_floor = True
-            self.end_of_lock = now + self.floor_rate
+            self.state = GameState.ON_FLOOR
+            self.end_of_lock = now + FLOOR_LOCK_RATE
             self.next_fall = self.end_of_lock
 
         self.is_player_falling = False
@@ -183,7 +177,7 @@ class GameScreen(Screen):
             if self.player.collides_with(self.opponent):
                 self.lose_the_game()
 
-        self.on_floor = False
+        self.state = GameState.PLAYING
         self.is_mopping_floor = False
 
     def spawn_player(self):
