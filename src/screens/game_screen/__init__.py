@@ -76,7 +76,7 @@ class GameScreen(Screen):
                 self.move_player_down()
             case pygame.K_e:
                 self.opponent.eat(self.player)
-                self.opponent.remove_rows(self.opponent.find_full_rows())
+                self.remove_full_lines()
                 self.spawn_player()
             case _:
                 pass
@@ -100,8 +100,13 @@ class GameScreen(Screen):
         self.score.total = total
 
     def remove_full_lines(self):
-        # lines_removed = self.opponent.remove_full_lines
-        pass
+        full_rows = self.opponent.find_full_rows()
+        if not full_rows:
+            return
+
+        self.opponent.remove_rows(full_rows=full_rows)
+
+        # TODO applying score code in ruby shouldn't be here
 
     def toggle_paused(self):
         self.paused = not self.paused
