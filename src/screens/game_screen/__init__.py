@@ -33,6 +33,12 @@ class Command(Enum):
     LOSE_THE_GAME = 8
 
 
+class GameState(Enum):
+    PAUSED = 1
+    PLAYING = 2
+    ON_FLOOR = 3
+
+
 class GameScreen(Screen):
     painter: GamePainter
     player: Shape
@@ -49,6 +55,8 @@ class GameScreen(Screen):
     is_mopping_floor: bool
     time_remaining_after_paused: int
     command_queue: list[Command]
+    state: GameState
+    previous_state: GameState
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
