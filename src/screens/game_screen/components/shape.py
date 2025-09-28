@@ -92,7 +92,7 @@ class Shape:
     def eat(self, other: Shape):
         self.squares += other.squares
 
-    def find_full_lines(self):
+    def find_full_rows(self):
         population: dict[int, int] = {}
         full_rows: list[int] = []
         for square in self.squares:
