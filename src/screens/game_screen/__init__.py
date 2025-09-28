@@ -126,18 +126,16 @@ class GameScreen(Screen):
 
         able_to_move = self.move_player_down()
 
-        if able_to_move:
-            return
+        if not able_to_move:
+            self.opponent.eat(self.player)
+            full_rows = self.opponent.find_full_rows()
+            if full_rows:
+                self.opponent.remove_rows(full_rows=full_rows)
+                self.update_score(len(full_rows))
 
-        self.opponent.eat(self.player)
-        full_rows = self.opponent.find_full_rows()
-        if full_rows:
-            self.opponent.remove_rows(full_rows=full_rows)
-            self.update_score(len(full_rows))
-
-        self.spawn_player()
-        if self.player.collides_with(self.opponent):
-            self.show_game_over = True
+            self.spawn_player()
+            if self.player.collides_with(self.opponent):
+                self.show_game_over = True
 
         self.on_floor = False
         self.is_mopping_floor = False
@@ -165,15 +163,17 @@ class GameScreen(Screen):
         self.score.total = total
 
     def toggle_paused(self):
-        self.paused = not self.paused
-
-        if not self.paused:
-            return
-
         now = time_milis()
-        self.time_remaining_after_paused = (
-            self.next_fall - now if now < self.next_fall else 0
-        )
+        if self.paused:
+            self.next_fall = now + self.time_remaining_after_paused
+
+        else:
+            now = time_milis()
+            self.time_remaining_after_paused = (
+                self.next_fall - now if now < self.next_fall else 0
+            )
+
+        self.paused = not self.paused
 
     def restart(self):
         self.should_restart = True

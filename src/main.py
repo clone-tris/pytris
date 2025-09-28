@@ -57,5 +57,6 @@ class Pytris:
 
 def main() -> None:
     pygame.init()
+    pygame.key.set_repeat(300, 50)
     game = Pytris()
     game.loop()
