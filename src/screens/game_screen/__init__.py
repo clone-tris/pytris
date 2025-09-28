@@ -1,3 +1,4 @@
+from enum import Enum
 import time
 from typing import override
 
@@ -21,9 +22,19 @@ from screens.game_screen.components.tetromino import random_tetromino
 from screens.game_screen.playfield_painter import GamePainter
 
 
+class Command(Enum):
+    MOVE_LEFT = 1
+    MOVE_RIGHT = 2
+    MOVE_DOWN = 3
+    ROTATE = 4
+    PAUSE = 5
+    RESTART = 6
+    CLOSE_APPLICATION = 7
+    LOSE_THE_GAME = 8
+
+
 class GameScreen(Screen):
     painter: GamePainter
-    should_quit: bool
     player: Shape
     next_player: Shape
     opponent: Shape
@@ -37,15 +48,13 @@ class GameScreen(Screen):
     end_of_lock: int
     is_mopping_floor: bool
     time_remaining_after_paused: int
-    should_restart: bool
-    show_game_over: bool
+    command_queue: list[Command]
 
     def __init__(self) -> None:
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.score = Score()
         self.next_player = random_tetromino()
         self.opponent = Shape(row=0, column=0, squares=[])
-        self.should_quit = False
         self.paused = False
         self.is_player_falling = False
         self.on_floor = False
@@ -55,19 +64,33 @@ class GameScreen(Screen):
         self.end_of_lock = 0
         self.is_mopping_floor = False
         self.time_remaining_after_paused = 0
-        self.should_restart = False
-        self.show_game_over = False
+        self.command_queue = []
 
         self.spawn_player()
 
     @override
     def update(self) -> ScreenEvent | None:
-        if self.should_quit:
-            return ScreenEvent.CLOSE_APPLICATION
-        if self.should_restart:
-            return ScreenEvent.GO_TO_GAME
-        if self.show_game_over:
-            return ScreenEvent.GO_TO_OVER
+        for command in self.command_queue:
+            match command:
+                case Command.CLOSE_APPLICATION:
+                    return ScreenEvent.CLOSE_APPLICATION
+                case Command.RESTART:
+                    return ScreenEvent.GO_TO_GAME
+                case Command.LOSE_THE_GAME:
+                    return ScreenEvent.GO_TO_OVER
+                case Command.ROTATE:
+                    self.rotate_player()
+                case Command.MOVE_LEFT:
+                    self.move_player_left()
+                case Command.MOVE_RIGHT:
+                    self.move_player_right()
+                case Command.MOVE_DOWN:
+                    self.move_player_down()
+                case _:
+                    pass
+
+        self.command_queue = []
+
         self.apply_gravity()
 
     @override
@@ -80,19 +103,19 @@ class GameScreen(Screen):
     def key_down(self, key: int):
         match key:
             case pygame.K_q:
-                self.should_quit = True
+                self.command_queue.append(Command.CLOSE_APPLICATION)
             case pygame.K_r:
-                self.should_restart = True
+                self.restart()
             case pygame.K_p:
                 self.toggle_paused()
             case pygame.K_UP | pygame.K_w | pygame.K_SPACE:
-                self.rotate_player()
+                self.command_queue.append(Command.ROTATE)
             case pygame.K_a | pygame.K_LEFT:
-                self.move_player_left()
+                self.command_queue.append(Command.MOVE_LEFT)
             case pygame.K_d | pygame.K_RIGHT:
-                self.move_player_right()
+                self.command_queue.append(Command.MOVE_RIGHT)
             case pygame.K_s | pygame.K_DOWN:
-                self.move_player_down()
+                self.command_queue.append(Command.MOVE_DOWN)
             case _:
                 pass
 
@@ -143,7 +166,7 @@ class GameScreen(Screen):
 
             self.spawn_player()
             if self.player.collides_with(self.opponent):
-                self.show_game_over = True
+                self.lose_the_game()
 
         self.on_floor = False
         self.is_mopping_floor = False
@@ -184,10 +207,10 @@ class GameScreen(Screen):
         self.paused = not self.paused
 
     def restart(self):
-        self.should_restart = True
+        self.command_queue.append(Command.RESTART)
 
     def lose_the_game(self):
-        self.show_game_over = True
+        self.command_queue.append(Command.LOSE_THE_GAME)
 
     def rotate_player(self):
         if self.paused:
