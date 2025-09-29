@@ -89,7 +89,6 @@ class GameScreen(Screen):
             self.apply_gravity()
 
         self.command_queue = []
-
     @override
     def draw(self) -> Surface:
         self.painter.draw_playfield(player=self.player, opponent=self.opponent)
@@ -191,17 +190,29 @@ class GameScreen(Screen):
         self.score.total = total
 
     def toggle_paused(self):
-        now = time_milis()
         if self.state == GameState.PAUSED:
-            self.next_fall = now + self.time_remaining_after_paused
-            self.state = GameState.PLAYING
+            self.play()
+        elif self.state in [GameState.PLAYING, GameState.ON_FLOOR]:
+            self.pause()
 
-        elif self.state == GameState.PLAYING:
-            now = time_milis()
-            self.time_remaining_after_paused = (
-                self.next_fall - now if now < self.next_fall else 0
-            )
-            self.state = GameState.PAUSED
+    def pause(self):
+        now = time_milis()
+        if self.state == GameState.PLAYING:
+            self.time_remaining_after_paused = max(self.next_fall - now, 0)
+        elif self.state == GameState.ON_FLOOR:
+            self.time_remaining_after_paused = max(self.end_of_lock - now, 0)
+
+        self.previous_state = self.state
+        self.state = GameState.PAUSED
+
+    def play(self):
+        now = time_milis()
+        if self.previous_state == GameState.PLAYING:
+            self.next_fall = now + self.time_remaining_after_paused
+        elif self.previous_state == GameState.ON_FLOOR:
+            self.end_of_lock = now + self.time_remaining_after_paused
+
+        self.state = self.previous_state
 
     def restart(self):
         self.command_queue.append(Command.RESTART)

@@ -9,4 +9,3 @@ class Command(Enum):
     PAUSE = 5
     RESTART = 6
     CLOSE_APPLICATION = 7
-    LOSE_THE_GAME = 8
