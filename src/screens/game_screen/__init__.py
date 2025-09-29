@@ -82,13 +82,14 @@ class GameScreen(Screen):
                     case Command.MOVE_RIGHT:
                         self.move_player_right()
                     case Command.MOVE_DOWN:
-                        self.move_player_down()
+                        self.make_player_fall_now()
                     case _:
                         pass
 
             self.apply_gravity()
 
         self.command_queue = []
+
     @override
     def draw(self) -> Surface:
         self.painter.draw_playfield(player=self.player, opponent=self.opponent)
@@ -142,6 +143,10 @@ class GameScreen(Screen):
             self.next_fall = self.end_of_lock
 
         self.is_player_falling = False
+
+    def make_player_fall_now(self):
+        self.next_fall = 0
+        self.make_player_fall()
 
     def mop_the_floor(self):
         now = time_milis()
