@@ -6,6 +6,7 @@ from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen import GameScreen
+from screens.over_screen import OverScreen
 
 
 class Pytris:
@@ -30,6 +31,8 @@ class Pytris:
             self.running = False
         if screen_event == ScreenEvent.GO_TO_GAME:
             self.screen = GameScreen()
+        if screen_event == ScreenEvent.GO_TO_OVER:
+            self.screen = OverScreen(self.surface)
 
     def handle_events(self):
         for event in pygame.event.get():
