@@ -57,38 +57,35 @@ class GameScreen(Screen):
         self.spawn_player()
 
     @override
-    def update(self) -> ScreenEvent | None:
+    def update(self) -> ScreenEvent:
         if self.state == GameState.GAME_OVER:
             return ScreenEvent.GO_TO_OVER
 
         for command in self.command_queue:
             match command:
                 case Command.CLOSE_APPLICATION:
+                    self.clear_queue()
                     return ScreenEvent.CLOSE_APPLICATION
                 case Command.RESTART:
+                    self.clear_queue()
                     return ScreenEvent.GO_TO_GAME
                 case Command.PAUSE:
+                    self.clear_queue()
                     self.toggle_paused()
-                case _:
-                    pass
+                    return ScreenEvent.NONE
+                case Command.ROTATE:
+                    self.rotate_player()
+                case Command.MOVE_LEFT:
+                    self.move_player_left()
+                case Command.MOVE_RIGHT:
+                    self.move_player_right()
+                case Command.MOVE_DOWN:
+                    self.make_player_fall_now()
 
-        if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
-            for command in self.command_queue:
-                match command:
-                    case Command.ROTATE:
-                        self.rotate_player()
-                    case Command.MOVE_LEFT:
-                        self.move_player_left()
-                    case Command.MOVE_RIGHT:
-                        self.move_player_right()
-                    case Command.MOVE_DOWN:
-                        self.make_player_fall_now()
-                    case _:
-                        pass
+        self.clear_queue()
+        self.apply_gravity()
 
-            self.apply_gravity()
-
-        self.command_queue = []
+        return ScreenEvent.NONE
 
     @override
     def draw(self) -> Surface:
@@ -101,18 +98,34 @@ class GameScreen(Screen):
         match key:
             case pygame.K_q:
                 self.command_queue.append(Command.CLOSE_APPLICATION)
+
             case pygame.K_r:
-                self.restart()
+                self.command_queue.append(Command.RESTART)
+
             case pygame.K_p:
-                self.command_queue.append(Command.PAUSE)
+                if (
+                    self.state == GameState.PAUSED
+                    or self.state == GameState.PLAYING
+                    or self.state == GameState.ON_FLOOR
+                ):
+                    self.command_queue.append(Command.PAUSE)
+
             case pygame.K_UP | pygame.K_w | pygame.K_SPACE:
-                self.command_queue.append(Command.ROTATE)
+                if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
+                    self.command_queue.append(Command.ROTATE)
+
             case pygame.K_a | pygame.K_LEFT:
-                self.command_queue.append(Command.MOVE_LEFT)
+                if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
+                    self.command_queue.append(Command.MOVE_LEFT)
+
             case pygame.K_d | pygame.K_RIGHT:
-                self.command_queue.append(Command.MOVE_RIGHT)
+                if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
+                    self.command_queue.append(Command.MOVE_RIGHT)
+
             case pygame.K_s | pygame.K_DOWN:
-                self.command_queue.append(Command.MOVE_DOWN)
+                if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
+                    self.command_queue.append(Command.MOVE_DOWN)
+
             case _:
                 pass
 
@@ -147,6 +160,7 @@ class GameScreen(Screen):
     def make_player_fall_now(self):
         if self.state == GameState.PLAYING:
             self.next_fall = 0
+            self.score.total += 1
             self.make_player_fall()
 
     def mop_the_floor(self):
@@ -176,7 +190,7 @@ class GameScreen(Screen):
     def spawn_player(self):
         player = self.next_player.copy()
         player.row = player.row - player.height
-        player.column = int((PUZZLE_WIDTH - player.width) / 2)
+        player.column = (PUZZLE_WIDTH - player.width) // 2
         self.player = player
         self.next_player = random_tetromino()
 
@@ -184,7 +198,7 @@ class GameScreen(Screen):
         current_level = self.score.level
         base_points = POINTS[lines_removed]
         lines_cleared = self.score.lines_cleared + lines_removed
-        level = int(lines_cleared / LINES_PER_LEVEL + 1)
+        level = lines_cleared // LINES_PER_LEVEL + 1
         points = base_points * (level + 1)
         total = self.score.total + points
 
@@ -220,9 +234,6 @@ class GameScreen(Screen):
 
         self.state = self.previous_state
 
-    def restart(self):
-        self.command_queue.append(Command.RESTART)
-
     def rotate_player(self):
         foreshadow = self.player.copy()
         foreshadow.rotate()
@@ -251,3 +262,6 @@ class GameScreen(Screen):
             self.player = foreshadow
 
         return able_to_move
+
+    def clear_queue(self):
+        self.command_queue = []
