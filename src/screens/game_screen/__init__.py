@@ -1,5 +1,4 @@
 from enum import Enum
-import time
 from typing import override
 
 import pygame
@@ -14,6 +13,7 @@ from config import (
     LINES_PER_LEVEL,
     PUZZLE_WIDTH,
 )
+from engine.helpers import time_milis
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen.components.score import POINTS, Score
@@ -164,7 +164,9 @@ class GameScreen(Screen):
 
         able_to_move = self.move_player_down()
 
-        if not able_to_move:
+        if able_to_move:
+            self.state = GameState.PLAYING
+        else:
             self.opponent.eat(self.player)
             full_rows = self.opponent.find_full_rows()
             if full_rows:
@@ -173,10 +175,8 @@ class GameScreen(Screen):
 
             self.spawn_player()
             if self.player.collides_with(self.opponent):
-                self.lose_the_game()
-                return
+                self.state = GameState.GAME_OVER
 
-        self.state = GameState.PLAYING
         self.is_mopping_floor = False
 
     def spawn_player(self):
@@ -217,9 +217,6 @@ class GameScreen(Screen):
     def restart(self):
         self.command_queue.append(Command.RESTART)
 
-    def lose_the_game(self):
-        self.state = GameState.GAME_OVER
-
     def rotate_player(self):
         foreshadow = self.player.copy()
         foreshadow.rotate()
@@ -248,7 +245,3 @@ class GameScreen(Screen):
             self.player = foreshadow
 
         return able_to_move
-
-
-def time_milis():
-    return int(time.time() * 1000)
