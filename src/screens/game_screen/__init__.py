@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import override
 
 import pygame
@@ -19,19 +18,9 @@ from screen_event import ScreenEvent
 from screens.game_screen.components.score import POINTS, Score
 from screens.game_screen.components.shape import Shape
 from screens.game_screen.components.tetromino import random_tetromino
+from screens.game_screen.game_commands import Command
 from screens.game_screen.game_state import GameState
 from screens.game_screen.playfield_painter import GamePainter
-
-
-class Command(Enum):
-    MOVE_LEFT = 1
-    MOVE_RIGHT = 2
-    MOVE_DOWN = 3
-    ROTATE = 4
-    PAUSE = 5
-    RESTART = 6
-    CLOSE_APPLICATION = 7
-    LOSE_THE_GAME = 8
 
 
 class GameScreen(Screen):
