@@ -145,8 +145,9 @@ class GameScreen(Screen):
         self.is_player_falling = False
 
     def make_player_fall_now(self):
-        self.next_fall = 0
-        self.make_player_fall()
+        if self.state == GameState.PLAYING:
+            self.next_fall = 0
+            self.make_player_fall()
 
     def mop_the_floor(self):
         now = time_milis()
