@@ -1,6 +1,8 @@
 from typing import override
-from pygame import Rect, Surface
+
 import pygame
+from pygame import Rect, Surface
+
 import colors
 from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.screen import Screen
