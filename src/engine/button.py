@@ -1,12 +1,8 @@
-from typing import Literal
-
 import pygame
 from pygame import Font, Surface
 
 import colors
 from config import BUTTON_PADDING_LEFT, BUTTON_PADDING_TOP, FONT_NAME, FONT_SIZE_SMALL
-
-Align = Literal["left", "right"]
 
 
 class Button:
