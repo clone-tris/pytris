@@ -4,8 +4,9 @@ import pygame
 from pygame import Surface
 
 import colors
+from config import CANVAS_HEIGHT, CANVAS_WIDTH, SQUARE_WIDTH
+from engine.button import Button
 from engine.painter import Painter
-from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen.components.shape import Shape
@@ -17,17 +18,21 @@ class MenuScreen(Screen):
     next_step: ScreenEvent
     menu_painter: Painter
     graphic: Shape
+    start_button: Button
 
     def __init__(self) -> None:
         self.next_step = ScreenEvent.NONE
         self.menu_painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
-
         self.graphic = self.get_graphic()
+        self.start_button = Button(
+            text="[S]tart", row=2 * SQUARE_WIDTH, column=15 * SQUARE_WIDTH, align="left"
+        )
 
     @override
     def draw(self) -> Surface:
         self.menu_painter.draw_guide(self.menu_painter.surface.get_rect())
         self.menu_painter.draw_shape(shape=self.graphic, ref=(0, 0))
+        self.menu_painter.draw_button(self.start_button)
 
         return self.menu_painter.surface
 

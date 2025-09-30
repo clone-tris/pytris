@@ -4,11 +4,17 @@ from pygame import Font, Rect, Surface
 from pygame.typing import Point
 
 import colors
-import config
+from config import (
+    FONT_NAME,
+    FONT_SIZE_SMALL,
+    SQUARE_BORDER_WIDTH,
+    SQUARE_WIDTH,
+)
+from engine.button import Button
 from screens.game_screen.components.shape import Shape
 
-WIDTH = config.SQUARE_WIDTH
-BORDER = config.SQUARE_BORDER_WIDTH
+WIDTH = SQUARE_WIDTH
+BORDER = SQUARE_BORDER_WIDTH
 INNER = WIDTH - BORDER * 2
 
 
@@ -23,8 +29,8 @@ class Painter:
         self.surface = Surface((width, height))
         self.width = width
         self.height = height
-        self.font_name = pygame.font.match_font("jetbrainsmono")
-        self.small_font = pygame.font.Font(self.font_name, config.FONT_SIZE_SMALL)
+        self.font_name = pygame.font.match_font(FONT_NAME)
+        self.small_font = pygame.font.Font(self.font_name, FONT_SIZE_SMALL)
 
     def draw_guide(self, rect: Rect):
         pygame.draw.rect(
@@ -35,16 +41,16 @@ class Painter:
 
         x, y, width, height = rect
 
-        rows = height / config.SQUARE_WIDTH
-        columns = width / config.SQUARE_WIDTH
+        rows = height / SQUARE_WIDTH
+        columns = width / SQUARE_WIDTH
         color = colors.Ui.GUIDE.value
 
         for i in range(int(rows)):
-            line_y = y + i * config.SQUARE_WIDTH
+            line_y = y + i * SQUARE_WIDTH
             pygame.draw.line(self.surface, color, (x, line_y), (x + width, line_y))
 
         for i in range(int(columns)):
-            line_x = x + i * config.SQUARE_WIDTH
+            line_x = x + i * SQUARE_WIDTH
             pygame.draw.line(self.surface, color, (line_x, y), (line_x, y + height))
 
     def draw_shape(self, shape: Shape, ref: Point):
@@ -107,3 +113,6 @@ class Painter:
                 ],
                 colors.Square.BORDER_BOTTOM.value,
             )
+
+    def draw_button(self, button: Button):
+        self.surface.blit(button.surface, (button.row, button.column))
