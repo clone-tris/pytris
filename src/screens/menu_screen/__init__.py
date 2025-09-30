@@ -19,20 +19,21 @@ class MenuScreen(Screen):
     menu_painter: Painter
     graphic: Shape
     start_button: Button
+    quit_button: Button
 
     def __init__(self) -> None:
         self.next_step = ScreenEvent.NONE
         self.menu_painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.graphic = self.get_graphic()
-        self.start_button = Button(
-            text="[S]tart", row=2 * SQUARE_WIDTH, column=15 * SQUARE_WIDTH
-        )
+        self.start_button = Button(text="[S]tart", row=4, column=17)
+        self.quit_button = Button(text="[Q]uit", row=9, column=17)
 
     @override
     def draw(self) -> Surface:
         self.menu_painter.draw_guide(self.menu_painter.surface.get_rect())
         self.menu_painter.draw_shape(shape=self.graphic, ref=(0, 0))
         self.menu_painter.draw_button(self.start_button)
+        self.menu_painter.draw_button(self.quit_button)
 
         return self.menu_painter.surface
 
