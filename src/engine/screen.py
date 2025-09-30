@@ -13,5 +13,5 @@ class Screen:
     def key_down(self, key: int) -> None:  # pyright: ignore[reportUnusedParameter]
         pass
 
-    def mouse_button_up(self) -> None:
+    def mouse_button_up(self, pos: tuple[int, int]) -> None:
         pass

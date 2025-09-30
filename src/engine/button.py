@@ -1,14 +1,25 @@
 import pygame
 from pygame import Font, Surface
+from pygame.typing import Point
 
 import colors
-from config import BUTTON_PADDING_LEFT, BUTTON_PADDING_TOP, FONT_NAME, FONT_SIZE_SMALL
+from config import (
+    BUTTON_PADDING_LEFT,
+    BUTTON_PADDING_TOP,
+    FONT_NAME,
+    FONT_SIZE_SMALL,
+    SQUARE_WIDTH,
+)
 
 
 class Button:
     text: str
     row: int
     column: int
+    x: int
+    y: int
+    width: int
+    height: int
     font: Font
     surface: Surface
 
@@ -16,6 +27,8 @@ class Button:
         self.text = text
         self.row = row
         self.column = column
+        self.x = column * SQUARE_WIDTH
+        self.y = row * SQUARE_WIDTH
         self.font = pygame.font.Font(pygame.font.match_font(FONT_NAME), FONT_SIZE_SMALL)
         self.make_surface()
 
@@ -23,15 +36,21 @@ class Button:
         text_surface = self.font.render(self.text, True, colors.Ui.BUTTON_TEXT.value)
 
         text_width, text_height = text_surface.get_size()
-        button_width, button_height = (
+        self.width, self.height = (
             text_width + BUTTON_PADDING_LEFT * 2,
             text_height + BUTTON_PADDING_TOP * 2,
         )
 
-        self.surface = Surface((button_width, button_height))
+        self.surface = Surface((self.width, self.height))
         pygame.draw.rect(
             self.surface,
             colors.Ui.BUTTON_BACKGROUND.value,
-            (0, 0, button_width, button_height),
+            (0, 0, self.width, self.height),
         )
         self.surface.blit(text_surface, (BUTTON_PADDING_LEFT, BUTTON_PADDING_TOP))
+
+    def within_bounds(self, point: Point):
+        x, y = point
+        return (
+            self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height
+        )

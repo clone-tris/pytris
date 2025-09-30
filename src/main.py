@@ -45,7 +45,7 @@ class Pytris:
                 case pygame.KEYDOWN:
                     self.screen.key_down(key=cast(int, event.key))
                 case pygame.MOUSEBUTTONUP:
-                    self.screen.mouse_button_up()
+                    self.screen.mouse_button_up(pos=cast(tuple[int, int], event.pos))
                 case _:
                     pass
 

@@ -4,7 +4,6 @@ from pygame import Font, Rect
 import colors
 from config import (
     CANVAS_HEIGHT,
-    FONT_SIZE_SMALL,
     SIDEBAR_WIDTH,
     SQUARE_WIDTH,
     WAR_ZONE_WIDTH,

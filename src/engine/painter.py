@@ -115,6 +115,4 @@ class Painter:
             )
 
     def draw_button(self, button: Button):
-        self.surface.blit(
-            button.surface, (button.row * SQUARE_WIDTH, button.column * SQUARE_WIDTH)
-        )
+        self.surface.blit(button.surface, (button.x, button.y))

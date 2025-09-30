@@ -25,8 +25,8 @@ class MenuScreen(Screen):
         self.next_step = ScreenEvent.NONE
         self.menu_painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.graphic = self.get_graphic()
-        self.start_button = Button(text="[S]tart", row=4, column=17)
-        self.quit_button = Button(text="[Q]uit", row=9, column=17)
+        self.start_button = Button(text="[S]tart", row=17, column=4)
+        self.quit_button = Button(text="[Q]uit", row=17, column=9)
 
     @override
     def draw(self) -> Surface:
@@ -50,6 +50,13 @@ class MenuScreen(Screen):
                 self.next_step = ScreenEvent.GO_TO_GAME
             case _:
                 pass
+
+    @override
+    def mouse_button_up(self, pos: tuple[int, int]) -> None:
+        if self.start_button.within_bounds(point=pos):
+            self.next_step = ScreenEvent.GO_TO_GAME
+        if self.quit_button.within_bounds(point=pos):
+            self.next_step = ScreenEvent.CLOSE_APPLICATION
 
     def get_graphic(self):
         colors_list = list(colors.Tetromino)
