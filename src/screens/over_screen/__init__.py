@@ -21,6 +21,9 @@ class OverScreen(Screen):
         self.surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
         self.game_surface = game_surface
         self.next_step = ScreenEvent.NONE
+        # self.menu_button = Button(text="[R]etry", row=17, column=3)
+        # self.start_button = Button(text="[M]enu", row=17, column=7)
+        # self.quit_button = Button(text="[Q]uit", row=17, column=11)
 
     @override
     def draw(self) -> Surface:
