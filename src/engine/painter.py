@@ -1,6 +1,6 @@
 import pygame
 import pygame.gfxdraw
-from pygame import Rect, Surface
+from pygame import Font, Rect, Surface
 from pygame.typing import Point
 
 import colors
@@ -16,11 +16,15 @@ class Painter:
     surface: Surface
     width: int
     height: int
+    font_name: str
+    small_font: Font
 
     def __init__(self, width: int, height: int) -> None:
         self.surface = Surface((width, height))
         self.width = width
         self.height = height
+        self.font_name = pygame.font.match_font("jetbrainsmono")
+        self.small_font = pygame.font.Font(self.font_name, config.FONT_SIZE_SMALL)
 
     def draw_guide(self, rect: Rect):
         pygame.draw.rect(

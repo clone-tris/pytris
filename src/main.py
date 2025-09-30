@@ -30,6 +30,8 @@ class Pytris:
         screen_event = self.screen.update()
         if screen_event == ScreenEvent.CLOSE_APPLICATION:
             self.running = False
+        if screen_event == ScreenEvent.GO_TO_MENU:
+            self.screen = MenuScreen()
         if screen_event == ScreenEvent.GO_TO_GAME:
             self.screen = GameScreen()
         if screen_event == ScreenEvent.GO_TO_OVER:

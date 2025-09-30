@@ -17,13 +17,8 @@ PLAYFIELD_RECT = Rect(SIDEBAR_WIDTH, 0, WAR_ZONE_WIDTH, CANVAS_HEIGHT)
 
 
 class GamePainter(Painter):
-    score_font: Font
-
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
-        self.score_font = pygame.font.Font(
-            pygame.font.match_font("jetbrainsmono"), FONT_SIZE_SMALL
-        )
 
     def draw_playfield(self, player: Shape, opponent: Shape):
         self.draw_guide(rect=PLAYFIELD_RECT)
@@ -43,15 +38,15 @@ class GamePainter(Painter):
 
         self.draw_shape(shape=next_player, ref=(SQUARE_WIDTH, SQUARE_WIDTH))
 
-        level_surface = self.score_font.render(
+        level_surface = self.small_font.render(
             f"Level\n{score.level}", True, colors.Ui.WHITE_TEXT.value
         )
 
-        lines_cleared_surface = self.score_font.render(
+        lines_cleared_surface = self.small_font.render(
             f"Cleared\n{score.lines_cleared}", True, colors.Ui.WHITE_TEXT.value
         )
 
-        total_surface = self.score_font.render(
+        total_surface = self.small_font.render(
             f"Total\n{score.total}", True, colors.Ui.WHITE_TEXT.value
         )
 
