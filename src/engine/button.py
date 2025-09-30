@@ -13,15 +13,13 @@ class Button:
     text: str
     row: int
     column: int
-    align: Align
     font: Font
     surface: Surface
 
-    def __init__(self, text: str, row: int, column: int, align: Align) -> None:
+    def __init__(self, text: str, row: int, column: int) -> None:
         self.text = text
         self.row = row
         self.column = column
-        self.align = align
         self.font = pygame.font.Font(pygame.font.match_font(FONT_NAME), FONT_SIZE_SMALL)
         self.make_surface()
 

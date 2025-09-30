@@ -25,7 +25,7 @@ class MenuScreen(Screen):
         self.menu_painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.graphic = self.get_graphic()
         self.start_button = Button(
-            text="[S]tart", row=2 * SQUARE_WIDTH, column=15 * SQUARE_WIDTH, align="left"
+            text="[S]tart", row=2 * SQUARE_WIDTH, column=15 * SQUARE_WIDTH
         )
 
     @override
