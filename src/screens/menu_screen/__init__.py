@@ -1,12 +1,17 @@
+import random
 from typing import override
 
 import pygame
 from pygame import Rect, Surface
 
+import colors
 from engine.painter import Painter
 from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
+from screens.game_screen.components.shape import Shape
+from screens.game_screen.components.square import Square
+from screens.menu_screen.graphic import GRAPHIC_COORDS
 
 PADDING = 20
 POPUP_RECT = Rect(50, 200, CANVAS_WIDTH - 100, 200)
@@ -15,14 +20,19 @@ POPUP_RECT = Rect(50, 200, CANVAS_WIDTH - 100, 200)
 class MenuScreen(Screen):
     next_step: ScreenEvent
     menu_painter: Painter
+    graphic: Shape
 
     def __init__(self) -> None:
         self.next_step = ScreenEvent.NONE
         self.menu_painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
 
+        self.graphic = self.get_graphic()
+
     @override
     def draw(self) -> Surface:
         self.menu_painter.draw_guide(self.menu_painter.surface.get_rect())
+        self.menu_painter.draw_shape(shape=self.graphic, ref=(0, 0))
+
         return self.menu_painter.surface
 
     @override
@@ -38,3 +48,17 @@ class MenuScreen(Screen):
                 self.next_step = ScreenEvent.GO_TO_GAME
             case _:
                 pass
+
+    def get_graphic(self):
+        colors_list = list(colors.Tetromino)
+        colors_size = len(colors_list)
+
+        return Shape(
+            row=0,
+            column=0,
+            squares=[
+                Square(row=r, column=c, color=colors_list[i % colors_size].value)
+                for i, group in enumerate(GRAPHIC_COORDS)
+                for r, c in group
+            ],
+        )
