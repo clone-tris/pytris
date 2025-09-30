@@ -18,7 +18,7 @@ class Pytris:
     def __init__(self) -> None:
         self.surface = pygame.display.set_mode(size=(CANVAS_WIDTH, CANVAS_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.screen = GameScreen()
+        self.screen = OverScreen(self.surface)
         self.running = True
 
     def draw(self):

@@ -4,8 +4,8 @@ from screen_event import ScreenEvent
 
 
 class Screen:
-    def update(self) -> ScreenEvent | None:
-        pass
+    def update(self) -> ScreenEvent:
+        return ScreenEvent.NONE
 
     def draw(self) -> Surface:  # pyright: ignore[reportReturnType]
         pass
