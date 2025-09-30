@@ -6,6 +6,7 @@ from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen import GameScreen
+from screens.menu_screen import MenuScreen
 from screens.over_screen import OverScreen
 
 
@@ -18,7 +19,7 @@ class Pytris:
     def __init__(self) -> None:
         self.surface = pygame.display.set_mode(size=(CANVAS_WIDTH, CANVAS_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.screen = OverScreen(self.surface)
+        self.screen = MenuScreen()
         self.running = True
 
     def draw(self):
