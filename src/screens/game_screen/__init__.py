@@ -20,7 +20,7 @@ from screens.game_screen.components.shape import Shape
 from screens.game_screen.components.tetromino import random_tetromino
 from screens.game_screen.game_commands import Command
 from screens.game_screen.game_state import GameState
-from screens.game_screen.playfield_painter import GamePainter
+from screens.game_screen.game_painter import GamePainter
 
 
 class GameScreen(Screen):

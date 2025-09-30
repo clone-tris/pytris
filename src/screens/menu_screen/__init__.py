@@ -1,8 +1,7 @@
-import random
 from typing import override
 
 import pygame
-from pygame import Rect, Surface
+from pygame import Surface
 
 import colors
 from engine.painter import Painter
@@ -12,9 +11,6 @@ from screen_event import ScreenEvent
 from screens.game_screen.components.shape import Shape
 from screens.game_screen.components.square import Square
 from screens.menu_screen.graphic import GRAPHIC_COORDS
-
-PADDING = 20
-POPUP_RECT = Rect(50, 200, CANVAS_WIDTH - 100, 200)
 
 
 class MenuScreen(Screen):
