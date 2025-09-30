@@ -4,7 +4,7 @@ import pygame
 from pygame import Surface
 
 import colors
-from config import CANVAS_HEIGHT, CANVAS_WIDTH, SQUARE_WIDTH
+from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.button import Button
 from engine.painter import Painter
 from engine.screen import Screen
