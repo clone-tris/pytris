@@ -35,7 +35,7 @@ class Pytris:
         if screen_event == ScreenEvent.GO_TO_GAME:
             self.screen = GameScreen()
         if screen_event == ScreenEvent.GO_TO_OVER:
-            self.screen = OverScreen(self.surface)
+            self.screen = OverScreen()
 
     def handle_events(self):
         for event in pygame.event.get():

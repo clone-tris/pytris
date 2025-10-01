@@ -12,7 +12,6 @@ from screen_event import ScreenEvent
 
 
 class OverScreen(Screen):
-    game_surface: Surface
     painter: Painter
     next_step: ScreenEvent
     popup: Popup
@@ -20,9 +19,8 @@ class OverScreen(Screen):
     menu_button: Button
     quit_button: Button
 
-    def __init__(self, game_surface: Surface) -> None:
+    def __init__(self) -> None:
         self.painter = Painter(width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
-        self.game_surface = game_surface
         self.next_step = ScreenEvent.NONE
         self.popup = Popup("Game Over!")
         self.retry_button = Button(text="[R]etry", row=17, column=3)
@@ -31,7 +29,6 @@ class OverScreen(Screen):
 
     @override
     def draw(self) -> Surface:
-        self.painter.surface.blit(self.game_surface)
         self.painter.draw_popup(self.popup)
         self.painter.draw_button(self.retry_button)
         self.painter.draw_button(self.menu_button)

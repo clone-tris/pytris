@@ -32,6 +32,7 @@ class Painter:
 
     def __init__(self, width: int, height: int) -> None:
         self.surface = Surface((width, height))
+        self.surface.set_colorkey((0, 0, 0))
         self.width = width
         self.height = height
         self.font_name = pygame.font.match_font(FONT_NAME)
