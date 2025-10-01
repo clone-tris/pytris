@@ -34,7 +34,6 @@ class OverScreen(Screen):
     @override
     def draw(self) -> Surface:
         self.painter.surface.blit(self.game_surface)
-        self.painter.draw_guide(self.painter.surface.get_rect())
         self.painter.draw_popup(self.popup)
         self.painter.draw_button(self.retry_button)
         self.painter.draw_button(self.menu_button)
@@ -57,3 +56,12 @@ class OverScreen(Screen):
                 self.next_step = ScreenEvent.GO_TO_MENU
             case _:
                 pass
+
+    @override
+    def mouse_button_up(self, pos: tuple[int, int]) -> None:
+        if self.retry_button.within_bounds(point=pos):
+            self.next_step = ScreenEvent.GO_TO_GAME
+        if self.menu_button.within_bounds(point=pos):
+            self.next_step = ScreenEvent.GO_TO_MENU
+        if self.quit_button.within_bounds(point=pos):
+            self.next_step = ScreenEvent.CLOSE_APPLICATION
