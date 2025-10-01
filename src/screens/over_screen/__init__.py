@@ -33,7 +33,7 @@ class OverScreen(Screen):
 
     @override
     def draw(self) -> Surface:
-        # self.painter.surface.blit(self.game_surface)
+        self.painter.surface.blit(self.game_surface)
         self.painter.draw_guide(self.painter.surface.get_rect())
         self.painter.draw_popup(self.popup)
         self.painter.draw_button(self.retry_button)
