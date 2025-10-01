@@ -5,17 +5,21 @@ from pygame.typing import Point
 
 import colors
 from config import (
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
     FONT_NAME,
+    FONT_SIZE_LARGE,
     FONT_SIZE_SMALL,
     SQUARE_BORDER_WIDTH,
     SQUARE_WIDTH,
 )
 from engine.button import Button
+from engine.popup import Popup
 from screens.game_screen.components.shape import Shape
 
-WIDTH = SQUARE_WIDTH
-BORDER = SQUARE_BORDER_WIDTH
-INNER = WIDTH - BORDER * 2
+SWIDTH = SQUARE_WIDTH
+SBORDER = SQUARE_BORDER_WIDTH
+SINNER = SWIDTH - SBORDER * 2
 
 
 class Painter:
@@ -24,6 +28,7 @@ class Painter:
     height: int
     font_name: str
     small_font: Font
+    large_font: Font
 
     def __init__(self, width: int, height: int) -> None:
         self.surface = Surface((width, height))
@@ -31,6 +36,7 @@ class Painter:
         self.height = height
         self.font_name = pygame.font.match_font(FONT_NAME)
         self.small_font = pygame.font.Font(self.font_name, FONT_SIZE_SMALL)
+        self.large_font = pygame.font.Font(self.font_name, FONT_SIZE_LARGE)
 
     def draw_guide(self, rect: Rect):
         pygame.draw.rect(
@@ -56,14 +62,14 @@ class Painter:
     def draw_shape(self, shape: Shape, ref: Point):
         refX, refY = ref
         for square in shape.squares:
-            x = refX + (shape.column + square.column) * WIDTH
-            y = refY + (shape.row + square.row) * WIDTH
+            x = refX + (shape.column + square.column) * SWIDTH
+            y = refY + (shape.row + square.row) * SWIDTH
 
             # background
             pygame.draw.rect(
                 self.surface,
                 square.color,
-                [x, y, WIDTH, WIDTH],
+                [x, y, SWIDTH, SWIDTH],
             )
 
             # Left Border
@@ -71,9 +77,9 @@ class Painter:
                 self.surface,
                 [
                     (x, y),
-                    (x + BORDER, y + BORDER),
-                    (x + BORDER, y + WIDTH - BORDER),
-                    (x, y + WIDTH),
+                    (x + SBORDER, y + SBORDER),
+                    (x + SBORDER, y + SWIDTH - SBORDER),
+                    (x, y + SWIDTH),
                 ],
                 colors.Square.BORDER_SIDE.value,
             )
@@ -82,10 +88,10 @@ class Painter:
             pygame.gfxdraw.filled_polygon(
                 self.surface,
                 [
-                    (x + WIDTH, y),
-                    (x + WIDTH - BORDER, y + BORDER),
-                    (x + WIDTH - BORDER, y + WIDTH - BORDER),
-                    (x + WIDTH, y + WIDTH),
+                    (x + SWIDTH, y),
+                    (x + SWIDTH - SBORDER, y + SBORDER),
+                    (x + SWIDTH - SBORDER, y + SWIDTH - SBORDER),
+                    (x + SWIDTH, y + SWIDTH),
                 ],
                 colors.Square.BORDER_SIDE.value,
             )
@@ -95,9 +101,9 @@ class Painter:
                 self.surface,
                 [
                     (x, y),
-                    (x + BORDER, y + BORDER),
-                    (x + WIDTH - BORDER, y + BORDER),
-                    (x + WIDTH, y),
+                    (x + SBORDER, y + SBORDER),
+                    (x + SWIDTH - SBORDER, y + SBORDER),
+                    (x + SWIDTH, y),
                 ],
                 colors.Square.BORDER_TOP.value,
             )
@@ -106,13 +112,18 @@ class Painter:
             pygame.gfxdraw.filled_polygon(
                 self.surface,
                 [
-                    (x, y + WIDTH),
-                    (x + BORDER, y + WIDTH - BORDER),
-                    (x + WIDTH - BORDER, y + WIDTH - BORDER),
-                    (x + WIDTH, y + WIDTH),
+                    (x, y + SWIDTH),
+                    (x + SBORDER, y + SWIDTH - SBORDER),
+                    (x + SWIDTH - SBORDER, y + SWIDTH - SBORDER),
+                    (x + SWIDTH, y + SWIDTH),
                 ],
                 colors.Square.BORDER_BOTTOM.value,
             )
 
     def draw_button(self, button: Button):
         self.surface.blit(button.surface, (button.x, button.y))
+
+    def draw_popup(self, popup: Popup):
+        popup_x = (CANVAS_WIDTH - popup.width) // 2
+        popup_y = (CANVAS_HEIGHT - popup.height) // 2
+        self.surface.blit(popup.surface, (popup_x, popup_y))

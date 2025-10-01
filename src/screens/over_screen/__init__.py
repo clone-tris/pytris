@@ -1,37 +1,46 @@
 from typing import override
 
 import pygame
-from pygame import Rect, Surface
+from pygame import Surface
 
-import colors
 from config import CANVAS_HEIGHT, CANVAS_WIDTH
+from engine.button import Button
+from engine.painter import Painter
+from engine.popup import Popup
 from engine.screen import Screen
 from screen_event import ScreenEvent
 
-PADDING = 20
-POPUP_RECT = Rect(50, 200, CANVAS_WIDTH - 100, 200)
+PADDING = 24
 
 
 class OverScreen(Screen):
-    surface: Surface
     game_surface: Surface
+    painter: Painter
     next_step: ScreenEvent
+    popup: Popup
+    retry_button: Button
+    menu_button: Button
+    quit_button: Button
 
     def __init__(self, game_surface: Surface) -> None:
-        self.surface = Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
+        self.painter = Painter(width=CANVAS_WIDTH, height=CANVAS_HEIGHT)
         self.game_surface = game_surface
         self.next_step = ScreenEvent.NONE
-        # self.menu_button = Button(text="[R]etry", row=17, column=3)
-        # self.start_button = Button(text="[M]enu", row=17, column=7)
-        # self.quit_button = Button(text="[Q]uit", row=17, column=11)
+        self.popup = Popup("Game Over!")
+        self.retry_button = Button(text="[R]etry", row=17, column=3)
+        self.menu_button = Button(text="[M]enu", row=17, column=7)
+        self.quit_button = Button(text="[Q]uit", row=17, column=11)
 
     @override
     def draw(self) -> Surface:
-        # Temporary drawing that shows something that would resemble game over screen
-        self.surface.blit(self.game_surface)
-        pygame.draw.rect(self.surface, colors.Ui.POPUP_BACKGROUND.value, POPUP_RECT)
+        # self.painter.surface.blit(self.game_surface)
+        self.painter.draw_guide(self.painter.surface.get_rect())
+        self.painter.draw_popup(self.popup)
+        self.painter.draw_button(self.retry_button)
+        self.painter.draw_button(self.menu_button)
+        self.painter.draw_button(self.quit_button)
 
-        return self.surface
+        return self.painter.surface
 
     @override
     def update(self) -> ScreenEvent:

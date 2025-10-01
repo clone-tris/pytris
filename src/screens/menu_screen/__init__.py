@@ -16,26 +16,26 @@ from screens.menu_screen.graphic import GRAPHIC_COORDS
 
 class MenuScreen(Screen):
     next_step: ScreenEvent
-    menu_painter: Painter
+    painter: Painter
     graphic: Shape
     start_button: Button
     quit_button: Button
 
     def __init__(self) -> None:
         self.next_step = ScreenEvent.NONE
-        self.menu_painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
+        self.painter = Painter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.graphic = self.get_graphic()
         self.start_button = Button(text="[S]tart", row=17, column=4)
         self.quit_button = Button(text="[Q]uit", row=17, column=9)
 
     @override
     def draw(self) -> Surface:
-        self.menu_painter.draw_guide(self.menu_painter.surface.get_rect())
-        self.menu_painter.draw_shape(shape=self.graphic, ref=(0, 0))
-        self.menu_painter.draw_button(self.start_button)
-        self.menu_painter.draw_button(self.quit_button)
+        self.painter.draw_guide(self.painter.surface.get_rect())
+        self.painter.draw_shape(shape=self.graphic, ref=(0, 0))
+        self.painter.draw_button(self.start_button)
+        self.painter.draw_button(self.quit_button)
 
-        return self.menu_painter.surface
+        return self.painter.surface
 
     @override
     def update(self) -> ScreenEvent:
