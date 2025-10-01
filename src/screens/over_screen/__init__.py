@@ -10,8 +10,6 @@ from engine.popup import Popup
 from engine.screen import Screen
 from screen_event import ScreenEvent
 
-PADDING = 24
-
 
 class OverScreen(Screen):
     game_surface: Surface
