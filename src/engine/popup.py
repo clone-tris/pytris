@@ -16,7 +16,7 @@ class Popup:
 
     def __init__(self, text: str) -> None:
         self.text = text
-        self.font = pygame.font.Font(pygame.font.match_font(FONT_NAME), FONT_SIZE_LARGE)
+        self.font = pygame.font.Font(FONT_NAME, FONT_SIZE_LARGE)
         self.make_surface()
 
     def make_surface(self):

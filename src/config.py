@@ -21,4 +21,4 @@ LINES_PER_LEVEL = 10
 
 BUTTON_PADDING_LEFT = 8
 BUTTON_PADDING_TOP = 8
-FONT_NAME = "jetbrainsmono"
+FONT_NAME = "jetbrainsmono.ttf"

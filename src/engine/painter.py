@@ -26,7 +26,6 @@ class Painter:
     surface: Surface
     width: int
     height: int
-    font_name: str
     small_font: Font
     large_font: Font
 
@@ -35,9 +34,8 @@ class Painter:
         self.surface.set_colorkey((0, 0, 0))
         self.width = width
         self.height = height
-        self.font_name = pygame.font.match_font(FONT_NAME)
-        self.small_font = pygame.font.Font(self.font_name, FONT_SIZE_SMALL)
-        self.large_font = pygame.font.Font(self.font_name, FONT_SIZE_LARGE)
+        self.small_font = pygame.font.Font(FONT_NAME, FONT_SIZE_SMALL)
+        self.large_font = pygame.font.Font(FONT_NAME, FONT_SIZE_LARGE)
 
     def draw_guide(self, rect: Rect):
         pygame.draw.rect(
