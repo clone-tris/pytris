@@ -5,11 +5,11 @@ from pygame import Color
 
 class Tetromino(Enum):
     CYAN = Color("#00F0F0FF")
+    YELLOW = Color("#F0F000FF")
+    PURPLE = Color("#A000F0FF")
     BLUE = Color("#0000F0FF")
     ORANGE = Color("#F0A000FF")
-    YELLOW = Color("#F0F000FF")
     GREEN = Color("#00F000FF")
-    PURPLE = Color("#A000F0FF")
     RED = Color("#F00000FF")
 
 
