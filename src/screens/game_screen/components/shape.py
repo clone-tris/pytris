@@ -25,11 +25,12 @@ class Shape:
         self.width = 0
         self.height = 0
         self.squares = squares
-
-        if squares:
-            self.compute_size()
+        self.compute_size()
 
     def compute_size(self):
+        if len(self.squares) == 0:
+            return
+
         min_row = config.PUZZLE_HEIGHT
         max_row = 0
         min_column = config.PUZZLE_WIDTH
