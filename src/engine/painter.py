@@ -1,6 +1,6 @@
 import pygame
 import pygame.gfxdraw
-from pygame import Font, Rect, Surface
+from pygame import Color, Font, Rect, Surface
 from pygame.typing import Point
 
 import colors
@@ -16,10 +16,11 @@ from config import (
 from engine.button import Button
 from engine.popup import Popup
 from screens.game_screen.components.shape import Shape
+from screens.game_screen.components.square import Square
 
-SWIDTH = SQUARE_WIDTH
-SBORDER = SQUARE_BORDER_WIDTH
-SINNER = SWIDTH - SBORDER * 2
+SW = SQUARE_WIDTH
+BW = SQUARE_BORDER_WIDTH
+IW = SW - BW * 2
 
 
 class Painter:
@@ -58,66 +59,74 @@ class Painter:
             line_x = x + i * SQUARE_WIDTH
             pygame.draw.line(self.surface, color, (line_x, y), (line_x, y + height))
 
+    def draw_square_at_point(self, position: Point, color: Color):
+        x, y = position
+
+        # background
+        pygame.draw.rect(
+            self.surface,
+            color,
+            [x, y, SW, SW],
+        )
+
+        # Left Border
+        pygame.gfxdraw.filled_polygon(
+            self.surface,
+            [
+                (x, y),
+                (x + BW, y + BW),
+                (x + BW, y + SW - BW),
+                (x, y + SW),
+            ],
+            colors.Square.BORDER_SIDE.value,
+        )
+
+        # Right Border
+        pygame.gfxdraw.filled_polygon(
+            self.surface,
+            [
+                (x + SW, y),
+                (x + SW - BW, y + BW),
+                (x + SW - BW, y + SW - BW),
+                (x + SW, y + SW),
+            ],
+            colors.Square.BORDER_SIDE.value,
+        )
+
+        # Top Border
+        pygame.gfxdraw.filled_polygon(
+            self.surface,
+            [
+                (x, y),
+                (x + BW, y + BW),
+                (x + SW - BW, y + BW),
+                (x + SW, y),
+            ],
+            colors.Square.BORDER_TOP.value,
+        )
+
+        # Bottom Border
+        pygame.gfxdraw.filled_polygon(
+            self.surface,
+            [
+                (x, y + SW),
+                (x + BW, y + SW - BW),
+                (x + SW - BW, y + SW - BW),
+                (x + SW, y + SW),
+            ],
+            colors.Square.BORDER_BOTTOM.value,
+        )
+
+    def draw_squares(self, squares: list[Square], ref: Point):
+        x, y = ref
+        for square in squares:
+            self.draw_square_at_point(
+                (x + square.column * SW, y + square.row * SW), square.color
+            )
+
     def draw_shape(self, shape: Shape, ref: Point):
-        refX, refY = ref
-        for square in shape.squares:
-            x = refX + (shape.column + square.column) * SWIDTH
-            y = refY + (shape.row + square.row) * SWIDTH
-
-            # background
-            pygame.draw.rect(
-                self.surface,
-                square.color,
-                [x, y, SWIDTH, SWIDTH],
-            )
-
-            # Left Border
-            pygame.gfxdraw.filled_polygon(
-                self.surface,
-                [
-                    (x, y),
-                    (x + SBORDER, y + SBORDER),
-                    (x + SBORDER, y + SWIDTH - SBORDER),
-                    (x, y + SWIDTH),
-                ],
-                colors.Square.BORDER_SIDE.value,
-            )
-
-            # Right Border
-            pygame.gfxdraw.filled_polygon(
-                self.surface,
-                [
-                    (x + SWIDTH, y),
-                    (x + SWIDTH - SBORDER, y + SBORDER),
-                    (x + SWIDTH - SBORDER, y + SWIDTH - SBORDER),
-                    (x + SWIDTH, y + SWIDTH),
-                ],
-                colors.Square.BORDER_SIDE.value,
-            )
-
-            # Top Border
-            pygame.gfxdraw.filled_polygon(
-                self.surface,
-                [
-                    (x, y),
-                    (x + SBORDER, y + SBORDER),
-                    (x + SWIDTH - SBORDER, y + SBORDER),
-                    (x + SWIDTH, y),
-                ],
-                colors.Square.BORDER_TOP.value,
-            )
-
-            # Bottom Border
-            pygame.gfxdraw.filled_polygon(
-                self.surface,
-                [
-                    (x, y + SWIDTH),
-                    (x + SBORDER, y + SWIDTH - SBORDER),
-                    (x + SWIDTH - SBORDER, y + SWIDTH - SBORDER),
-                    (x + SWIDTH, y + SWIDTH),
-                ],
-                colors.Square.BORDER_BOTTOM.value,
-            )
+        x, y = ref
+        self.draw_squares(shape.squares, (x + shape.column * SW, y + shape.row * SW))
 
     def draw_button(self, button: Button):
         self.surface.blit(button.surface, (button.x, button.y))
