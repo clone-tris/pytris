@@ -26,6 +26,17 @@ class Color(Enum):
     Z = colors.Tetromino.RED
 
 
+COLORS = [
+    colors.Tetromino.CYAN,
+    colors.Tetromino.YELLOW,
+    colors.Tetromino.PURPLE,
+    colors.Tetromino.BLUE,
+    colors.Tetromino.ORANGE,
+    colors.Tetromino.GREEN,
+    colors.Tetromino.RED,
+]
+
+
 class Grid(Enum):
     I = [[0, 0], [0, 1], [0, 2], [0, 3]]
     O = [[0, 0], [0, 1], [1, 0], [1, 1]]

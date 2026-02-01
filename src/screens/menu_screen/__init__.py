@@ -3,7 +3,6 @@ from typing import override
 import pygame
 from pygame import Surface
 
-import colors
 from config import CANVAS_HEIGHT, CANVAS_WIDTH
 from engine.button import Button
 from engine.painter import Painter
@@ -59,15 +58,11 @@ class MenuScreen(Screen):
             self.next_step = ScreenEvent.CLOSE_APPLICATION
 
     def get_graphic(self):
-        colors_list = list(colors.Tetromino)
-        colors_size = len(colors_list)
-
         return Shape(
             row=0,
             column=0,
             squares=[
-                Square(row=r, column=c, color=colors_list[i % colors_size].value)
-                for i, group in enumerate(GRAPHIC_COORDS)
-                for r, c in group
+                Square(row=row, column=column, color=color.value)
+                for row, column, color in GRAPHIC_COORDS
             ],
         )
