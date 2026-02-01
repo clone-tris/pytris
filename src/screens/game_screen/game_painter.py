@@ -11,6 +11,7 @@ from config import (
 from engine.painter import Painter
 from screens.game_screen.components.score import Score
 from screens.game_screen.components.shape import Shape
+from screens.game_screen.components.square import Square
 
 PLAYFIELD_RECT = Rect(SIDEBAR_WIDTH, 0, WAR_ZONE_WIDTH, CANVAS_HEIGHT)
 
@@ -19,9 +20,9 @@ class GamePainter(Painter):
     def __init__(self, width: int, height: int) -> None:
         super().__init__(width, height)
 
-    def draw_playfield(self, player: Shape, opponent: Shape):
+    def draw_playfield(self, player: Shape, opponent: list[Square]):
         self.draw_guide(rect=PLAYFIELD_RECT)
-        self.draw_shape(shape=opponent, ref=(SIDEBAR_WIDTH, 0))
+        self.draw_squares(squares=opponent, ref=(SIDEBAR_WIDTH, 0))
         self.draw_shape(shape=player, ref=(SIDEBAR_WIDTH, 0))
 
     def draw_sidebar(self, next_player: Shape, score: Score):

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import override
 
 import pygame
@@ -12,11 +13,13 @@ from config import (
     LINES_PER_LEVEL,
     PUZZLE_WIDTH,
 )
+import config
 from engine.helpers import time_milis
 from engine.screen import Screen
 from screen_event import ScreenEvent
 from screens.game_screen.components.score import POINTS, Score
 from screens.game_screen.components.shape import Shape
+from screens.game_screen.components.square import Square
 from screens.game_screen.components.tetromino import random_tetromino
 from screens.game_screen.game_commands import Command
 from screens.game_screen.game_painter import GamePainter
@@ -27,7 +30,7 @@ class GameScreen(Screen):
     painter: GamePainter
     player: Shape
     next_player: Shape
-    opponent: Shape
+    opponent: list[Square]
     score: Score
     fall_rate: int
     next_fall: int
@@ -43,7 +46,7 @@ class GameScreen(Screen):
         self.painter = GamePainter(CANVAS_WIDTH, CANVAS_HEIGHT)
         self.score = Score()
         self.next_player = random_tetromino()
-        self.opponent = Shape(row=0, column=0, squares=[])
+        self.opponent = []
         self.is_player_falling = False
         self.next_fall = time_milis()
         self.fall_rate = INITIAL_FALL_RATE
@@ -114,15 +117,15 @@ class GameScreen(Screen):
                 if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
                     self.command_queue.append(Command.ROTATE)
 
-            case pygame.K_a | pygame.K_LEFT:
+            case pygame.K_LEFT | pygame.K_a:
                 if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
                     self.command_queue.append(Command.MOVE_LEFT)
 
-            case pygame.K_d | pygame.K_RIGHT:
+            case pygame.K_RIGHT | pygame.K_d:
                 if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
                     self.command_queue.append(Command.MOVE_RIGHT)
 
-            case pygame.K_s | pygame.K_DOWN:
+            case pygame.K_DOWN | pygame.K_s:
                 if self.state == GameState.PLAYING or self.state == GameState.ON_FLOOR:
                     self.command_queue.append(Command.MOVE_DOWN)
 
@@ -158,10 +161,12 @@ class GameScreen(Screen):
         self.is_player_falling = False
 
     def make_player_fall_now(self):
-        if self.state == GameState.PLAYING:
-            self.next_fall = 0
-            self.score.total += 1
-            self.make_player_fall()
+        if not (self.state == GameState.PLAYING):
+            return
+
+        self.next_fall = 0
+        self.score.total += 1
+        self.make_player_fall()
 
     def mop_the_floor(self):
         now = time_milis()
@@ -175,31 +180,42 @@ class GameScreen(Screen):
         if able_to_move:
             self.state = GameState.PLAYING
         else:
-            self.opponent.eat(self.player)
-            full_rows = self.opponent.find_full_rows()
+            self.eat_player()
+            full_rows = self.find_full_rows()
             if full_rows:
-                self.opponent.remove_rows(full_rows=full_rows)
+                self.remove_opponent_full_rows(full_rows=full_rows)
                 self.update_score(len(full_rows))
 
-            self.spawn_player()
-            if self.player.collides_with(self.opponent):
+            if self.spawn_player():
+                self.state = GameState.PLAYING
+                self.next_fall = now + self.fall_rate
+            else:
                 self.state = GameState.GAME_OVER
 
         self.is_mopping_floor = False
 
-    def spawn_player(self):
-        player = self.next_player.copy()
-        player.row = player.row - player.height
-        player.column = (PUZZLE_WIDTH - player.width) // 2
-        self.player = player
+    def spawn_player(self) -> bool:
+        foreshadow = self.next_player.copy()
+        foreshadow.row = 0
+        foreshadow.column = (PUZZLE_WIDTH - foreshadow.width) // 2
+        overlaps = foreshadow.overlaps_squares(self.opponent)
+        if overlaps:
+            foreshadow.row = -1
+            overlaps = foreshadow.overlaps_squares(self.opponent)
+            if overlaps:
+                return False
+
+        self.player = foreshadow
         self.next_player = random_tetromino()
+
+        return True
 
     def update_score(self, lines_removed: int):
         current_level = self.score.level
         base_points = POINTS[lines_removed]
         lines_cleared = self.score.lines_cleared + lines_removed
         level = lines_cleared // LINES_PER_LEVEL + 1
-        points = base_points * (level + 1)
+        points = base_points * current_level
         total = self.score.total + points
 
         if level != current_level:
@@ -255,8 +271,41 @@ class GameScreen(Screen):
             self.player = foreshadow
         return able_to_move
 
+    def eat_player(self):
+        for square in self.player.squares:
+            self.opponent.append(
+                square.relative_copy(row=self.player.row, column=self.player.column)
+            )
+
+    def remove_opponent_full_rows(self, full_rows: list[int]):
+        filtered_squares_grid = deepcopy(
+            [square for square in self.opponent if square.row not in full_rows]
+        )
+
+        squares: list[Square] = []
+        for square in filtered_squares_grid:
+            row_before_shifting = square.row
+            for full_row in full_rows:
+                if full_row > row_before_shifting:
+                    square.row += 1
+            squares.append(square)
+
+        self.opponent = squares
+
+    def find_full_rows(self):
+        population: dict[int, int] = {}
+        full_rows: list[int] = []
+        for square in self.opponent:
+            population[square.row] = population.get(square.row, 0) + 1
+
+        full_rows = [
+            row for row, count in population.items() if count >= config.PUZZLE_WIDTH
+        ]
+
+        return full_rows
+
     def is_legal_shape_position(self, shape: Shape) -> bool:
-        return not shape.collides_with(self.opponent) and shape.within_bounds()
+        return not shape.overlaps_squares(self.opponent) and shape.within_bounds()
 
     def clear_queue(self):
         self.command_queue = []
