@@ -221,7 +221,6 @@ class GameScreen(Screen):
             self.time_remaining_after_paused = max(self.next_fall - now, 0)
         elif self.state == GameState.ON_FLOOR:
             self.time_remaining_after_paused = max(self.end_of_lock - now, 0)
-
         self.previous_state = self.state
         self.state = GameState.PAUSED
 
@@ -231,14 +230,12 @@ class GameScreen(Screen):
             self.next_fall = now + self.time_remaining_after_paused
         elif self.previous_state == GameState.ON_FLOOR:
             self.end_of_lock = now + self.time_remaining_after_paused
-
         self.state = self.previous_state
 
     def rotate_player(self):
         foreshadow = self.player.copy()
         foreshadow.rotate()
-
-        if not foreshadow.collides_with(self.opponent) and foreshadow.within_bounds():
+        if self.is_legal_shape_position(foreshadow):
             self.player = foreshadow
 
     def move_player_left(self):
@@ -253,15 +250,13 @@ class GameScreen(Screen):
     def move_player(self, row: int, column: int):
         foreshadow = self.player.copy()
         foreshadow.translate(row=row, column=column)
-
-        able_to_move = (
-            not foreshadow.collides_with(self.opponent) and foreshadow.within_bounds()
-        )
-
+        able_to_move = self.is_legal_shape_position(foreshadow)
         if able_to_move:
             self.player = foreshadow
-
         return able_to_move
+
+    def is_legal_shape_position(self, shape: Shape) -> bool:
+        return not shape.collides_with(self.opponent) and shape.within_bounds()
 
     def clear_queue(self):
         self.command_queue = []
